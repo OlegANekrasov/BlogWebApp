@@ -1,0 +1,11 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860 
+*@
+
+@using BlogWebApp.Controllers
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link @UserManagementController.PersonalDataNavClass(ViewContext)" id="profile" asp-action="PersonalDataView">Данные</a></li>
+    <li class="nav-item"><a class="nav-link @UserManagementController.ChangePasswordNavClass(ViewContext)" id="change-password" asp-action="ChangePasswordView">Пароль</a></li>
+    <li class="nav-item"><a class="nav-link @UserManagementController.AboutNavClass(ViewContext)" id="About" asp-action="AboutView">Информация о себе</a></li>
+</ul>

@@ -1,0 +1,26 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.Users;
+@model UserEditViewModel
+
+@{
+    ViewData["Title"] = "Настройки";
+    ViewData["ActivePage"] = UserManagementController.About;
+}
+
+<h2>Изменение информации</h2>
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="UserId" class="form-control" type="hidden" />
+            <input asp-for="UserName" class="form-control" type="hidden" />
+            <input asp-for="Email" class="form-control" type="hidden" />
+            <div class="form-floating">
+                <textarea asp-for="About" class="form-control" style="height:300px;">@Model.About</textarea>
+                <label asp-for="About" class="form-label"></label>
+                <span asp-validation-for="About" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
