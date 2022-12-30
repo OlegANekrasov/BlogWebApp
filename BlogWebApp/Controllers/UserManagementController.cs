@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Extentions;
 using BlogWebApp.DAL.Interfaces;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
+using System.Drawing.Printing;
 
 namespace BlogWebApp.Controllers
 {
@@ -127,7 +129,6 @@ namespace BlogWebApp.Controllers
 
             return View("AboutView", model);
         }
-
 
         public static string PersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, PersonalData);
         public static string AboutNavClass(ViewContext viewContext) => PageNavClass(viewContext, About);

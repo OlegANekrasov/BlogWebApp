@@ -1,0 +1,36 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.Users
+@model UserDeleteViewModel
+
+@{
+    ViewData["Title"] = "Настройки";
+}
+
+<h2>Удалить пользователя?</h2>
+
+<div>
+    <hr />
+    <form id="changerole-form" method="post">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.UserName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.UserName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.RoleName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.RoleName)
+            </dd>
+        </dl>
+        <button id="update-profile-button" type="submit" class="btn btn-lg btn-danger">Удалить</button>
+    </form>
+</div>
