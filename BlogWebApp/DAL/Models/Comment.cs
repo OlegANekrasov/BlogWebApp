@@ -1,5 +1,8 @@
-﻿namespace BlogWebApp.DAL.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BlogWebApp.DAL.Models
 {
+    [Table("Comments")]
     public class Comment
     {
         public string Id { get; set; }

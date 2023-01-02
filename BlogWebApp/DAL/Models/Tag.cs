@@ -1,5 +1,8 @@
-﻿namespace BlogWebApp.DAL.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BlogWebApp.DAL.Models
 {
+    [Table("Tags")]
     public class Tag
     {
         public string Id { get; set; }

@@ -1,7 +1,9 @@
-﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BlogWebApp.DAL.Models
 {
+    [Table("BlogArticles")]
     public class BlogArticle
     {
         public string Id { get; set; }
