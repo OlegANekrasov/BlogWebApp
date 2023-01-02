@@ -1,14 +1,16 @@
 ﻿using BlogWebApp.BLL.Models;
+using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
+using NuGet.Protocol.Core.Types;
 
 namespace BlogWebApp.BLL.Services
 {
     public class BlogArticleService : IBlogArticleService
     {
-        BlogArticlesRepository blogArticlesRepository;
+        IRepository<BlogArticle> blogArticlesRepository;
 
-        public BlogArticleService(BlogArticlesRepository _blogArticlesRepository) 
+        public BlogArticleService(IRepository<BlogArticle> _blogArticlesRepository) 
         {
             blogArticlesRepository = _blogArticlesRepository;
         }

@@ -4,6 +4,7 @@ using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Extentions;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +13,7 @@ using System.Drawing.Printing;
 
 namespace BlogWebApp.Controllers
 {
+    [Authorize]
     public class UserManagementController : Controller
     {
         private readonly IMapper _mapper;

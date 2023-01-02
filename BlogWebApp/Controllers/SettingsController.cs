@@ -1,14 +1,17 @@
 ﻿using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data;
 
 namespace BlogWebApp.Controllers
 {
+    [Authorize(Roles = "администратор")]
     public class SettingsController : Controller
     {
         private readonly UserManager<User> _userManager;

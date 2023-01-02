@@ -1,5 +1,6 @@
 using AutoMapper;
 using BlogWebApp;
+using BlogWebApp.BLL.Services;
 using BlogWebApp.DAL.EF;
 using BlogWebApp.DAL.Extentions;
 using BlogWebApp.DAL.Models;
@@ -71,6 +72,8 @@ builder.Services.AddUnitOfWork();
 builder.Services.AddCustomRepository<BlogArticle, BlogArticlesRepository>();
 builder.Services.AddCustomRepository<Tag, TagsRepository>();
 builder.Services.AddCustomRepository<Comment, CommentsRepository>();
+
+builder.Services.AddScoped<IBlogArticleService, BlogArticleService>();
 
 var app = builder.Build();
 

@@ -36,22 +36,22 @@
     <tbody>
         @foreach (var item in Model)
         {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RoleName)
-                    </td>
-                    <td>
-                        <a asp-action="SaveRole" asp-route-id="@item.Id">Изменить роль</a>
-                        <text> | </text>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoleName)
+                </td>
+                <td>
+                    <a asp-action="SaveRole" asp-route-id="@item.Id">Изменить роль</a>
+                    <text> | </text>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
