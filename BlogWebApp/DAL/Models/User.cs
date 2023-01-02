@@ -22,10 +22,5 @@ namespace BlogWebApp.DAL.Models
         {
             return FirstName + " " + MiddleName + " " + LastName;
         }
-
-        public User()
-        {
-            About = "Информация обо мне.";
-        }
     }
 }

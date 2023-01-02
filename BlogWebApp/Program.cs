@@ -3,6 +3,7 @@ using BlogWebApp;
 using BlogWebApp.DAL.EF;
 using BlogWebApp.DAL.Extentions;
 using BlogWebApp.DAL.Models;
+using BlogWebApp.DAL.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -67,6 +68,9 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddUnitOfWork();
+builder.Services.AddCustomRepository<BlogArticle, BlogArticlesRepository>();
+builder.Services.AddCustomRepository<Tag, TagsRepository>();
+builder.Services.AddCustomRepository<Comment, CommentsRepository>();
 
 var app = builder.Build();
 

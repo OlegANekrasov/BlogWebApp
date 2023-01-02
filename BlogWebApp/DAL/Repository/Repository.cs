@@ -31,7 +31,7 @@ namespace BlogWebApp.DAL.Repository
             await _db.SaveChangesAsync();
         }
 
-        public async Task<T> Get(int id)
+        public async Task<T> Get(string id)
         {
             return await Set.FindAsync(id);
         }
