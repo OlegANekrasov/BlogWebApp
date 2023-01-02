@@ -1,14 +1,16 @@
 ﻿using BlogWebApp.BLL.Models;
 using BlogWebApp.DAL.Models;
+using BlogWebApp.DAL.Repository;
 
 namespace BlogWebApp.BLL.Services
 {
     public class BlogArticleService : IBlogArticleService
     {
+        BlogArticlesRepository blogArticlesRepository;
 
-        public BlogArticleService() 
-        { 
-        
+        public BlogArticleService(BlogArticlesRepository _blogArticlesRepository) 
+        {
+            blogArticlesRepository = _blogArticlesRepository;
         }
 
         public Task Add(AddBlogArticle model, User user)
@@ -33,7 +35,7 @@ namespace BlogWebApp.BLL.Services
 
         public IEnumerable<BlogArticle> GetAll()
         {
-            throw new NotImplementedException();
+            return blogArticlesRepository.GetAll();
         }
     }
 }

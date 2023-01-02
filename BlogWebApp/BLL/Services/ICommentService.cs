@@ -1,6 +1,14 @@
-﻿namespace BlogWebApp.BLL.Services
+﻿using BlogWebApp.BLL.Models;
+using BlogWebApp.DAL.Models;
+
+namespace BlogWebApp.BLL.Services
 {
     public interface ICommentService
     {
+        IEnumerable<Comment> GetAll();
+        Task<Comment> Get(string id);
+        Task Add(AddComment model);
+        Task Edit(EditComment model);
+        Task Delete(DelComment model);
     }
 }

@@ -6,7 +6,6 @@
 
         public string Name { get; set; }
 
-        public string BlogArticleId { get; set; }
-        public BlogArticle? BlogArticle { get; set; }
+        public List<BlogArticle> BlogArticles { get; set; }
     }
 }

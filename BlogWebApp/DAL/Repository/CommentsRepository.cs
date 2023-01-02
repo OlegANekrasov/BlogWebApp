@@ -64,9 +64,9 @@ namespace BlogWebApp.DAL.Repository
             return GetAll();
         }
 
-        public IEnumerable<Comment> GetAllById(string id)
+        public Comment GetById(string id)
         {
-            return GetAll().Where(o => o.Id == id);
+            return GetAll().FirstOrDefault(o => o.Id == id);
         }
     }
 }
