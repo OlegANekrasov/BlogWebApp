@@ -1,6 +1,6 @@
 ﻿using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.Users;
-using BlogWebApp.DAL.Models.Users;
+using BlogWebApp.DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

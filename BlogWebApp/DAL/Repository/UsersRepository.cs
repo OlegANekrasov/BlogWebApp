@@ -1,5 +1,5 @@
 ﻿using BlogWebApp.DAL.EF;
-using BlogWebApp.DAL.Models.Users;
+using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.DAL.Repository
 {

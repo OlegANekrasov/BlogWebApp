@@ -2,7 +2,7 @@ using AutoMapper;
 using BlogWebApp;
 using BlogWebApp.DAL.EF;
 using BlogWebApp.DAL.Extentions;
-using BlogWebApp.DAL.Models.Users;
+using BlogWebApp.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;

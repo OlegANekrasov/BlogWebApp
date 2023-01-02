@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BlogWebApp.BLL.ViewModels.Users;
-using BlogWebApp.DAL.Models.Users;
+using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp
 {

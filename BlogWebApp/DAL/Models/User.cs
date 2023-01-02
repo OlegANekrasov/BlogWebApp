@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BlogWebApp.DAL.Models.Users
+namespace BlogWebApp.DAL.Models
 {
     public class User : IdentityUser
     {
@@ -16,6 +16,8 @@ namespace BlogWebApp.DAL.Models.Users
 
         public string? About { get; set; }
 
+        public List<BlogArticle> BlogArticles { get; set; }
+
         public string GetFullName()
         {
             return FirstName + " " + MiddleName + " " + LastName;
@@ -25,6 +27,5 @@ namespace BlogWebApp.DAL.Models.Users
         {
             About = "Информация обо мне.";
         }
-
     }
 }
