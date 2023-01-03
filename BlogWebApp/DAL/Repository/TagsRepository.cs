@@ -1,6 +1,7 @@
 ﻿using BlogWebApp.BLL.Models;
 using BlogWebApp.DAL.EF;
 using BlogWebApp.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogWebApp.DAL.Repository
 {
@@ -55,12 +56,23 @@ namespace BlogWebApp.DAL.Repository
 
         public IEnumerable<Tag> GetAll()
         {
-            return GetAll();
+            return base.GetAll();
         }
 
         public Tag GetById(string id)
         {
             return GetAll().FirstOrDefault(o => o.Id == id);
+        }
+
+        public Tag GetByName(string name)
+        {
+            IEnumerable<Tag> allTags = Set.Include(c => c.BlogArticles);
+            if (allTags.Any())
+            {
+                return allTags.FirstOrDefault(o => o.Name == name);
+            }
+
+            return null;
         }
     }
 }

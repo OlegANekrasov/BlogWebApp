@@ -1,4 +1,5 @@
 ﻿using BlogWebApp.BLL.Models;
+using BlogWebApp.BLL.ViewModels.BlogArticles;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
@@ -28,14 +29,14 @@ namespace BlogWebApp.BLL.Services
             throw new NotImplementedException();
         }
 
-        public Task Edit(EditBlogArticle model)
+        public async Task Edit(EditBlogArticle model)
         {
-            throw new NotImplementedException();
+            await ((BlogArticlesRepository)_blogArticlesRepository).Edit(model);
         }
 
-        public Task<BlogArticle> Get(string id)
+        public BlogArticle Get(string id)
         {
-            throw new NotImplementedException();
+            return ((BlogArticlesRepository)_blogArticlesRepository).GetById(id);
         }
 
         public IEnumerable<BlogArticle> GetAll()
@@ -52,6 +53,26 @@ namespace BlogWebApp.BLL.Services
         private async Task<User> FindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public void SetTagsInModel(EditBlogArticleViewModel model, BlogArticle blogArticle)
+        {
+            bool first = true;
+            string tagStr = "";
+            foreach (var tag in blogArticle.Tags)
+            {
+                if (first)
+                {
+                    tagStr += tag.Name;
+                    first = false;
+                }
+                else
+                {
+                    tagStr += (", " + tag.Name);
+                }
+            }
+
+            model.Tags = tagStr;
         }
     }
 }

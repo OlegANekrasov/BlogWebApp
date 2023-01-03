@@ -72,6 +72,43 @@ namespace BlogWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
+            var blogArticle = _blogArticleService.Get(id);
+            if (blogArticle == null)
+            {
+                return NotFound($"Не найдена статья с ID '{id}'.");
+            }
+
+            var model = _mapper.Map<EditBlogArticleViewModel>(blogArticle);
+            ((BlogArticleService)_blogArticleService).SetTagsInModel(model, blogArticle);
+
+            model.UserId = user.Id;
+            
+            return View("Edit", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditBlogArticleViewModel incomingmModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var model = _mapper.Map<EditBlogArticle>(incomingmModel);
+                await _blogArticleService.Edit(model);
+            }
+            else
+            {
+                ModelState.AddModelError("", "Некорректные данные");
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

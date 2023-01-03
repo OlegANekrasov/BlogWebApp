@@ -2,6 +2,7 @@
 using BlogWebApp.DAL.EF;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogWebApp.DAL.Repository
 {
@@ -31,25 +32,20 @@ namespace BlogWebApp.DAL.Repository
 
                 await Create(item);
 
+                List<string> listNewTags = new List<string>();
                 string[] tags = model.Tags.Split(',');
-                foreach(var tag in tags)
+                foreach (var tag in tags)
                 {
-                    var tagItem = new Tag()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Name = tag.Trim()
-                    };
-
-                    tagItem.BlogArticles.Add(item);
-
-                    _tagsRepository.Create(tagItem);
+                    listNewTags.Add(tag.Trim());
                 }
+
+                await AddTags(listNewTags, item);
             }
         }
 
         public async Task Edit(EditBlogArticle model)
         {
-            var blogArticle = await Get(model.Id);    
+            var blogArticle = Set.Include(c => c.Tags).FirstOrDefault(o => o.Id == model.Id);     //await Get(model.Id);    
             if (blogArticle != null)
             {
                 var edit = false;
@@ -66,11 +62,82 @@ namespace BlogWebApp.DAL.Repository
                     edit = true;
                 }
 
-                if(edit)
+                List<string> listNewTags = new List<string>();
+                string[] tags = model.Tags.Split(',');
+                foreach (var tag in tags)
+                {
+                    listNewTags.Add(tag.Trim());  
+                }
+
+                List<string> listTags = blogArticle.Tags.Select(o => o.Name).ToList();
+
+                var addTags = listNewTags.Except(listTags).ToList();
+                var delTags = listTags.Except(listNewTags).ToList();
+
+                if(addTags.Any() || delTags.Any())
+                {
+                    edit = true;
+                }
+
+                await AddTags(addTags, blogArticle);
+                await DelTags(delTags, blogArticle);
+
+                if (edit)
                 {
                     blogArticle.DateChange = DateTime.Now;
                     await Update(blogArticle);
                 }
+            }
+        }
+
+        private async Task AddTags(List<string> listTags, BlogArticle item)
+        {
+            foreach (var tag in listTags)
+            {
+                bool tagItemNew = false;
+
+                Tag tagItem = ((TagsRepository)_tagsRepository).GetByName(tag);
+                if (tagItem == null)
+                {
+                    tagItemNew = true;
+                    tagItem = new Tag()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = tag
+                    };
+                }
+
+                tagItem.BlogArticles.Add(item);
+
+                if (tagItemNew)
+                    await _tagsRepository.Create(tagItem);
+                else
+                    await _tagsRepository.Update(tagItem);
+            }
+        }
+
+        private async Task DelTags(List<string> listTags, BlogArticle item)
+        {
+            bool update = false;
+            foreach (var tag in listTags)
+            {
+                Tag tagItem = ((TagsRepository)_tagsRepository).GetByName(tag);
+                if (tagItem != null)
+                {
+                    item.Tags.Remove(tagItem);
+
+                    if(tagItem.BlogArticles.Count() == 1)
+                    {
+                        await _tagsRepository.Delete(tagItem);
+                    }
+
+                    update = true;
+                }
+            }
+
+            if(update)
+            {
+                await Update(item);
             }
         }
 
@@ -95,7 +162,12 @@ namespace BlogWebApp.DAL.Repository
 
         public BlogArticle GetById(string id)
         {
-            return GetAll().FirstOrDefault(o => o.Id == id);
+            IEnumerable<BlogArticle> allBlogArticle = Set.Include(c => c.Tags);
+            if(allBlogArticle.Any())
+            {
+                return allBlogArticle.FirstOrDefault(o => o.Id == id);
+            }
+            return null;
         }
     }
 }
