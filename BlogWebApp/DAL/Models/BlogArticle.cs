@@ -19,7 +19,7 @@ namespace BlogWebApp.DAL.Models
         public string UserId { get; set; }
         public User? User { get; set; }
 
-        public List<Tag> Tags { get; set; }
-        public List<Comment> Comments { get; set; }
+        public List<Tag> Tags { get; set; } = new List<Tag>();
+        public List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

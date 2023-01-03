@@ -9,6 +9,6 @@ namespace BlogWebApp.DAL.Models
 
         public string Name { get; set; }
 
-        public List<BlogArticle> BlogArticles { get; set; }
+        public List<BlogArticle> BlogArticles { get; set; } = new List<BlogArticle>();
     }
 }

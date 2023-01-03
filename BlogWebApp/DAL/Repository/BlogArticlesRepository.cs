@@ -1,13 +1,17 @@
 ﻿using BlogWebApp.BLL.Models;
 using BlogWebApp.DAL.EF;
+using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.DAL.Repository
 {
     public class BlogArticlesRepository : Repository<BlogArticle>
     {
-        public BlogArticlesRepository(ApplicationDbContext db) : base(db)
+        private readonly IRepository<Tag> _tagsRepository;
+
+        public BlogArticlesRepository(ApplicationDbContext db, IRepository<Tag> tagsRepository) : base(db)
         {
+            _tagsRepository = tagsRepository;
         }
 
         public async Task Add(AddBlogArticle model, User user)
@@ -17,6 +21,7 @@ namespace BlogWebApp.DAL.Repository
             {
                 var item = new BlogArticle()
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Title = model.Title,
                     Description = model.Description,
                     DateCreation = DateTime.Now,
@@ -25,6 +30,20 @@ namespace BlogWebApp.DAL.Repository
                 };
 
                 await Create(item);
+
+                string[] tags = model.Tags.Split(',');
+                foreach(var tag in tags)
+                {
+                    var tagItem = new Tag()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = tag.Trim()
+                    };
+
+                    tagItem.BlogArticles.Add(item);
+
+                    _tagsRepository.Create(tagItem);
+                }
             }
         }
 

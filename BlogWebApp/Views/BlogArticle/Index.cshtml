@@ -8,27 +8,38 @@
 }
 <h1>@ViewData["Title"]</h1>
 
+<form asp-action="Create" method="get">
+    <div class="form-actions no-color">
+        <p>
+            <input type="submit" value="Создать Статью" class="btn btn-secondary" />
+        </p>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                <a asp-action="UserList" asp-route-sortOrder="Email" asp-route-currentFilter="@ViewData["CurrentFilter"]">Login</a>
+                <a asp-action="BlogArticle" asp-route-sortOrder="Title" asp-route-currentFilter="@ViewData["CurrentFilter"]">Статья</a>
             </th>
             <th>
-                <a asp-action="UserList" asp-route-sortOrder="UserName" asp-route-currentFilter="@ViewData["CurrentFilter"]">ФИО</a>
+                <a asp-action="BlogArticle" asp-route-sortOrder="UserName" asp-route-currentFilter="@ViewData["CurrentFilter"]">Автор</a>
             </th>
             <th>
-                <a asp-action="UserList" asp-route-sortOrder="RoleName" asp-route-currentFilter="@ViewData["CurrentFilter"]">Роль</a>
+                <a asp-action="BlogArticle" asp-route-sortOrder="DateCreation" asp-route-currentFilter="@ViewData["CurrentFilter"]">Создана</a>
             </th>
            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.blogArticles)
+        @foreach (var item in Model._blogArticles)
         {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DateCreation)
