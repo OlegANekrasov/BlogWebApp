@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BlogWebApp.BLL.Models;
 using BlogWebApp.BLL.ViewModels.BlogArticles;
+using BlogWebApp.BLL.ViewModels.Tags;
 using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Models;
 
@@ -23,6 +24,13 @@ namespace BlogWebApp
                                                                 .ForMember(x => x.DateCreation, opt => opt.MapFrom(c => c.DateCreation.ToString("dd.MM.yyyy")));
             
             CreateMap<DeleteBlogArticleViewModel, DelBlogArticle>();
+
+            CreateMap<CreateTagViewModel, AddTag>();
+            CreateMap<DeleteTagViewModel, DelTag>();
+            CreateMap<EditTagViewModel, EditTag>();
+
+            CreateMap<EditTag, AddTag>();
+            CreateMap<EditTag, DelTag>();
         }
     }
 }

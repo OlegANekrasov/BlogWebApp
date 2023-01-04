@@ -1,0 +1,36 @@
+﻿@using BlogWebApp.BLL.ViewModels.Tags
+@model ListTagsViewModel
+
+@{
+    ViewData["Title"] = "Теги";
+}
+<h1>@ViewData["Title"]</h1>
+
+<a asp-action="Create"
+   asp-route-blogArticleId="@Model._blogArticleId"
+   class="btn btn-secondary">
+   Добавить тег
+</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Тег</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tag in Model._tags)
+        {
+            <tr>
+                <td>
+                    @tag.Name
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-blogArticleId="@Model._blogArticleId" asp-route-id="@tag.Id">Изменить</a>
+                    <text> | </text>
+                    <a asp-action="Delete" asp-route-blogArticleId="@Model._blogArticleId" asp-route-id="@tag.Id">Удалить</a>
+                </td>
+             </tr>
+        }
+    </tbody>
+</table>

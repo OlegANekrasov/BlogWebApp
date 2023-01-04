@@ -1,38 +1,72 @@
-﻿using BlogWebApp.BLL.Models;
+﻿using AutoMapper;
+using BlogWebApp.BLL.Models;
+using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
+using BlogWebApp.DAL.Repository;
 
 namespace BlogWebApp.BLL.Services
 {
     public class TagService : ITagService
     {
-        public TagService()
-        {
+        private readonly IRepository<Tag> _tagsRepository;
+        private readonly IRepository<BlogArticle> _blogArticlesRepository;
+        private readonly IMapper _mapper;
 
+        public TagService(IRepository<Tag> tagsRepository, IRepository<BlogArticle> blogArticlesRepository, IMapper mapper)
+        {
+            _tagsRepository = tagsRepository;
+            _blogArticlesRepository = blogArticlesRepository;
+            _mapper = mapper;
         }
         
-        public Task Add(AddTag model)
+        public async Task Add(AddTag model)
         {
-            throw new NotImplementedException();
+            Tag tag = await((TagsRepository)_tagsRepository).Add(model);
+            
+            List<string> listTags = new List<string> { model.Name };
+
+            BlogArticle blogArticle = await _blogArticlesRepository.Get(model.BlogArticleId);
+            ((BlogArticlesRepository)_blogArticlesRepository).AddTags(listTags, blogArticle);
         }
 
-        public Task Delete(DelTag model)
+        public async Task Delete(DelTag model)
         {
-            throw new NotImplementedException();
+            var tag = Get(model.Id);
+            var blogArticle = await _blogArticlesRepository.Get(model.BlogArticleId);
+            if (blogArticle != null && tag != null)
+            {
+                List<string> listTags = new List<string> { tag.Name };
+                ((BlogArticlesRepository)_blogArticlesRepository).DelTags(listTags, blogArticle);
+            }
+
+            await ((TagsRepository)_tagsRepository).Delete(model);
         }
 
-        public Task Edit(EditTag model)
+        public async Task Edit(EditTag model)
         {
-            throw new NotImplementedException();
+            var tag = Get(model.Id);
+            if(tag.BlogArticles.Count() == 1)
+            {
+                await ((TagsRepository)_tagsRepository).Edit(model);
+            }
+            else
+            {
+                var modelDel = _mapper.Map<DelTag>(model);
+                await Delete(modelDel);
+
+                var modelAdd = _mapper.Map<AddTag>(model);
+                await Add(modelAdd);
+            }
         }
 
-        public Task<Tag> Get(string id)
+        public Tag Get(string id)
         {
-            throw new NotImplementedException();
+            return ((TagsRepository)_tagsRepository).GetById(id);
         }
 
         public IEnumerable<Tag> GetAll()
         {
-            throw new NotImplementedException();
+            return ((TagsRepository)_tagsRepository).GetAll();
         }
     }
 }

@@ -90,7 +90,7 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
-        private async Task AddTags(List<string> listTags, BlogArticle item)
+        public async Task AddTags(List<string> listTags, BlogArticle item)
         {
             foreach (var tag in listTags)
             {
@@ -116,7 +116,7 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
-        private async Task DelTags(List<string> listTags, BlogArticle item)
+        public async Task DelTags(List<string> listTags, BlogArticle item)
         {
             bool update = false;
             foreach (var tag in listTags)

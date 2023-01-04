@@ -1,0 +1,27 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.Tags
+@model CreateTagViewModel
+
+@{
+    ViewData["Title"] = "Теги";
+}
+
+<h2>Создание тега</h2>
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="@Model.BlogArticleId" class="form-control" type="hidden" />
+            <div class="form-floating">
+                <input asp-for="Name" class="form-control" />
+                <label asp-for="Name" class="form-label"></label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+                <partial name="_ValidationScriptsPartial" />
+}
