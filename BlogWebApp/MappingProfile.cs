@@ -18,6 +18,11 @@ namespace BlogWebApp
             CreateMap<BlogArticle, EditBlogArticleViewModel>();
 
             CreateMap<EditBlogArticleViewModel, EditBlogArticle>();
+
+            CreateMap<BlogArticle, DeleteBlogArticleViewModel>().ForMember(x => x.UserName, opt => opt.MapFrom(c => c.User.Email))
+                                                                .ForMember(x => x.DateCreation, opt => opt.MapFrom(c => c.DateCreation.ToString("dd.MM.yyyy")));
+            
+            CreateMap<DeleteBlogArticleViewModel, DelBlogArticle>();
         }
     }
 }

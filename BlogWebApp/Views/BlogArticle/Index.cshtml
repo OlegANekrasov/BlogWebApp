@@ -1,7 +1,9 @@
 ﻿@using BlogWebApp.BLL.ViewModels
 @using BlogWebApp.BLL.ViewModels.BlogArticles
 @using BlogWebApp.DAL.Models
-@model BlogArticleListViewModel
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model PaginatedList<BlogArticleViewModel>
 
 @{
     ViewData["Title"] = "Статьи";
@@ -16,23 +18,37 @@
     </div>
 </form>
 
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Поиск по автору: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            Поиск по тегам: <input type="text" name="SearchString1" value="@ViewData["CurrentFilter1"]" />
+            <input type="submit" value="Найти" class="btn btn-secondary" /> |
+            <a asp-action="Index">Отменить поиск</a>
+        </p>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                <a asp-action="BlogArticle" asp-route-sortOrder="Title" asp-route-currentFilter="@ViewData["CurrentFilter"]">Статья</a>
+                <a asp-action="Index" asp-route-sortOrder="Title" asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-currentFilter1="@ViewData["CurrentFilter1"]">Статья</a>
             </th>
             <th>
-                <a asp-action="BlogArticle" asp-route-sortOrder="UserName" asp-route-currentFilter="@ViewData["CurrentFilter"]">Автор</a>
+                <a asp-action="Index" asp-route-sortOrder="Author" asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-currentFilter1="@ViewData["CurrentFilter1"]">Автор</a>
             </th>
             <th>
-                <a asp-action="BlogArticle" asp-route-sortOrder="DateCreation" asp-route-currentFilter="@ViewData["CurrentFilter"]">Создана</a>
+                <a asp-action="Index" asp-route-sortOrder="DateCreation" asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-currentFilter1="@ViewData["CurrentFilter1"]">Создана</a>
             </th>
            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model._blogArticles)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>
@@ -45,11 +61,39 @@
                     @Html.DisplayFor(modelItem => item.DateCreation)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Изменить статью</a>
-                    <text> | </text>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorRole")).Succeeded ||
+                         (await AuthorizationService.AuthorizeAsync(User, "RequireModeratorRole")).Succeeded || item.IsEdit)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Изменить статью</a>
+                        <text> | </text>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                    }                        
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-currentFilter1="@ViewData["CurrentFilter1"]"
+   class="btn btn-primary @prevDisabled">
+   <i class="glyphicon glyphicon-chevron-left"></i>
+   Назад
+</a>
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-currentFilter1="@ViewData["CurrentFilter1"]"
+   class="btn btn-primary @nextDisabled">
+   Вперед
+   <i class="glyphicon glyphicon-chevron-right"></i>
+</a>

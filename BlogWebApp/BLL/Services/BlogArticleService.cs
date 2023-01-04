@@ -24,9 +24,9 @@ namespace BlogWebApp.BLL.Services
             await ((BlogArticlesRepository)_blogArticlesRepository).Add(model, user);
         }
 
-        public Task Delete(DelBlogArticle model)
+        public async Task Delete(DelBlogArticle model)
         {
-            throw new NotImplementedException();
+            await((BlogArticlesRepository)_blogArticlesRepository).Delete(model);
         }
 
         public async Task Edit(EditBlogArticle model)
@@ -50,16 +50,27 @@ namespace BlogWebApp.BLL.Services
             return all_blogArticles;
         }
 
+        public IEnumerable<BlogArticle> GetAllIncludeTags()
+        {
+            var all_blogArticles = ((BlogArticlesRepository)_blogArticlesRepository).GetAllIncludeTags();
+            foreach (var blogArticle in all_blogArticles)
+            {
+                blogArticle.User = FindByIdAsync(blogArticle.UserId).Result;
+            }
+
+            return all_blogArticles;
+        }
+
         private async Task<User> FindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
         }
 
-        public void SetTagsInModel(EditBlogArticleViewModel model, BlogArticle blogArticle)
+        public string SetTagsInModel(List<Tag> tags)
         {
             bool first = true;
             string tagStr = "";
-            foreach (var tag in blogArticle.Tags)
+            foreach (var tag in tags)
             {
                 if (first)
                 {
@@ -72,7 +83,7 @@ namespace BlogWebApp.BLL.Services
                 }
             }
 
-            model.Tags = tagStr;
+            return tagStr;
         }
     }
 }

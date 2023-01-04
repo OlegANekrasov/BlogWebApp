@@ -45,7 +45,7 @@ namespace BlogWebApp.DAL.Repository
 
         public async Task Edit(EditBlogArticle model)
         {
-            var blogArticle = Set.Include(c => c.Tags).FirstOrDefault(o => o.Id == model.Id);     //await Get(model.Id);    
+            var blogArticle = Set.Include(c => c.Tags).FirstOrDefault(o => o.Id == model.Id);    
             if (blogArticle != null)
             {
                 var edit = false;
@@ -143,16 +143,25 @@ namespace BlogWebApp.DAL.Repository
 
         public async Task Delete(DelBlogArticle model)
         {
-            var blogArticle = await Get(model.Id);
+            var blogArticle = Set.Include(c => c.Tags).FirstOrDefault(o => o.Id == model.Id);
             if (blogArticle != null)
             {
+                List<string> listTags = blogArticle.Tags.Select(o => o.Name).ToList();
+                
+                await DelTags(listTags, blogArticle);
                 await Delete(blogArticle);
             }
         }
 
         public IEnumerable<BlogArticle> GetAll()
         {
-            return GetAll();
+            return base.GetAll();
+        }
+
+        public IEnumerable<BlogArticle> GetAllIncludeTags()
+        {
+            IEnumerable<BlogArticle> allBlogArticle = Set.Include(c => c.Tags);
+            return allBlogArticle;
         }
 
         public IEnumerable<BlogArticle> GetAllByUserId(string userId)

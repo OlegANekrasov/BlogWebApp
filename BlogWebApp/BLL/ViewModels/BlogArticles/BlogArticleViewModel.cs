@@ -14,13 +14,17 @@ namespace BlogWebApp.BLL.ViewModels.BlogArticles
 
         public string Author { get; set; }
 
-        public BlogArticleViewModel(BlogArticle blogArticle)
+        public bool IsEdit { get; set; } = false;
+
+        public BlogArticleViewModel(BlogArticle blogArticle, User user)
         {
             Id = blogArticle.Id;
             Title = blogArticle.Title;
             DateCreation = blogArticle.DateCreation.ToString("dd.MM.yyyy");
             UserId = blogArticle.UserId;
             Author = blogArticle.User.Email;
+
+            if(user == blogArticle.User) IsEdit = true;
         }
     }
 }
