@@ -14,8 +14,8 @@
                         @Html.DisplayFor(modelItem => item.Author) @Html.DisplayFor(modelItem => item.DateChange)
                     </div>
                     <div class="form-floating">
-                        <a asp-action="Create" asp-route-Id="@item.Id" class="btn btn-sm btn-secondary"> Редактировать </a>
-                        <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-sm btn-danger"> Удалить </a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-secondary"> Редактировать </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-danger"> Удалить </a>
                     </div>
                 </td>
             </tr>

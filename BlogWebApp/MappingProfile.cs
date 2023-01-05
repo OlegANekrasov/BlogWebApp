@@ -34,6 +34,8 @@ namespace BlogWebApp
             CreateMap<EditTag, DelTag>();
 
             CreateMap<CreateCommentViewModel, AddComment>();
+            CreateMap<EditCommentViewModel, EditComment>();
+            CreateMap<DeleteCommentViewModel, DelComment>();
         }
     }
 }

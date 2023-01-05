@@ -19,19 +19,19 @@ namespace BlogWebApp.BLL.Services
             await ((CommentsRepository)_commentsRepository).Add(model);
         }
 
-        public Task Delete(DelComment model)
+        public async Task Delete(DelComment model)
         {
-            throw new NotImplementedException();
+            await((CommentsRepository)_commentsRepository).Delete(model);
         }
 
-        public Task Edit(EditComment model)
+        public async Task Edit(EditComment model)
         {
-            throw new NotImplementedException();
+            await ((CommentsRepository)_commentsRepository).Edit(model);
         }
 
-        public Task<Comment> Get(string id)
+        public Comment Get(string id)
         {
-            throw new NotImplementedException();
+            return ((CommentsRepository)_commentsRepository).GetById(id);
         }
 
         public IEnumerable<Comment> GetAll()

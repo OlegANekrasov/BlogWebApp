@@ -6,7 +6,7 @@ namespace BlogWebApp.BLL.Services
     public interface ICommentService
     {
         IEnumerable<Comment> GetAll();
-        Task<Comment> Get(string id);
+        Comment Get(string id);
         Task Add(AddComment model);
         Task Edit(EditComment model);
         Task Delete(DelComment model);

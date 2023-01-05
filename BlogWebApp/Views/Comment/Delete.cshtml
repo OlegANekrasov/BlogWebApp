@@ -1,0 +1,25 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.Comment
+@model DeleteCommentViewModel
+
+@{
+    ViewData["Title"] = "Комментарии";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Удалить комментарий?</h2>
+
+<div>
+    <hr />
+    <form id="changerole-form" method="post">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Content)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Content)
+            </dd>
+        </dl>
+        <button id="update-profile-button" type="submit" class="btn btn-lg btn-danger">Удалить</button>
+    </form>
+</div>

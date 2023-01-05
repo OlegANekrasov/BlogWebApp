@@ -80,7 +80,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Не найден пользователь с ID '{_userManager.GetUserId(User)}'.");
             }
 
             CreateCommentViewModel model = new CreateCommentViewModel("", blogArticleId, user.Id); 
@@ -104,5 +104,57 @@ namespace BlogWebApp.Controllers
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
         }
 
+        [HttpGet]
+        public IActionResult Edit(string id, string blogArticleId)
+        {
+            var comment = _commentService.Get(id);
+            if (comment == null)
+            {
+                return NotFound($"Не найден комментарий с ID '{id}'.");
+            }
+
+            EditCommentViewModel model = new EditCommentViewModel(comment.Content, id, blogArticleId);
+
+            return View("Edit", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditCommentViewModel incomingmModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var model = _mapper.Map<EditComment>(incomingmModel);
+                await _commentService.Edit(model);
+            }
+            else
+            {
+                ModelState.AddModelError("", "Некорректные данные");
+            }
+
+            return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
+        }
+
+        [HttpGet]
+        public IActionResult Delete(string id, string blogArticleId)
+        {
+            var comment = _commentService.Get(id);
+            if (comment == null)
+            {
+                return NotFound($"Не найден комментарий с ID '{id}'.");
+            }
+
+            DeleteCommentViewModel model = new DeleteCommentViewModel(comment.Content, id, blogArticleId);
+
+            return View("Delete", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(DeleteCommentViewModel incomingmModel)
+        {
+            var model = _mapper.Map<DelComment>(incomingmModel);
+            await _commentService.Delete(model);
+            
+            return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
+        }
     }
 }
