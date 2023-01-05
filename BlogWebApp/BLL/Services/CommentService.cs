@@ -1,18 +1,22 @@
 ﻿using BlogWebApp.BLL.Models;
+using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
+using BlogWebApp.DAL.Repository;
 
 namespace BlogWebApp.BLL.Services
 {
     public class CommentService : ICommentService
     {
-        public CommentService()
-        {
+        private readonly IRepository<Comment> _commentsRepository;
 
+        public CommentService(IRepository<Comment> commentsRepository)
+        {
+            _commentsRepository = commentsRepository;
         }
         
-        public Task Add(AddComment model)
+        public async Task Add(AddComment model)
         {
-            throw new NotImplementedException();
+            await ((CommentsRepository)_commentsRepository).Add(model);
         }
 
         public Task Delete(DelComment model)
@@ -32,7 +36,18 @@ namespace BlogWebApp.BLL.Services
 
         public IEnumerable<Comment> GetAll()
         {
-            throw new NotImplementedException();
+            return ((CommentsRepository)_commentsRepository).GetAll();
+        }
+
+        public IEnumerable<Comment> GetAllByBlogArticleId(string blogArticleId)
+        {
+            var comments = ((CommentsRepository)_commentsRepository).GetAllByBlogArticleId(blogArticleId);
+            if(comments != null)
+            {
+                return comments;
+            }
+
+            return null;
         }
     }
 }

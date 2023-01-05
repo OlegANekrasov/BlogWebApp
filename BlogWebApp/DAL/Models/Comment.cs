@@ -11,7 +11,7 @@ namespace BlogWebApp.DAL.Models
 
         public DateTime DateCreation { get; set; }
 
-        public DateTime? DateChange { get; set; }
+        public DateTime DateChange { get; set; }
 
         public byte[]? Image { get; set; }
 

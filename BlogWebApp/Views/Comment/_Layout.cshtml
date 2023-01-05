@@ -1,0 +1,20 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.Comment
+@model BlogArticleViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+}
+
+
+
+<div>
+    <partial name="_Article" for="blogArticle"/>
+</div>
+<hr />
+
+<h2>Комментарии</h2>
+
+<div>
+    @RenderBody()
+</div>

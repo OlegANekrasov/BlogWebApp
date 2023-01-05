@@ -164,6 +164,12 @@ namespace BlogWebApp.DAL.Repository
             return allBlogArticle;
         }
 
+        public BlogArticle GetIncludeCommentsById(string id)
+        {
+            IEnumerable<BlogArticle> blogArticles = Set.Include(c => c.Comments);
+            return blogArticles.FirstOrDefault(o => o.Id == id);
+        }
+
         public IEnumerable<BlogArticle> GetAllByUserId(string userId)
         {
             return GetAll().Where(o => o.UserId == userId);

@@ -4,26 +4,31 @@ using BlogWebApp.DAL.EF;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BlogWebApp.DAL.Repository
 {
     public class CommentsRepository : Repository<Comment>
     {
-        UserManager<User> userManager;
+        private readonly UserManager<User> userManager;
+        private readonly IRepository<BlogArticle> _blogArticlesRepository;
 
-        public CommentsRepository(ApplicationDbContext db, UserManager<User> _userManager) : base(db)
+        public CommentsRepository(ApplicationDbContext db, UserManager<User> _userManager, IRepository<BlogArticle> blogArticlesRepository) : base(db)
         {
             userManager = _userManager;
+            _blogArticlesRepository = blogArticlesRepository;
         }
 
-        public async Task Add(AddComment model, BlogArticlesRepository blogArticlesRepository)
+        public async Task Add(AddComment model)
         {
             var item = new Comment()
             {
+                Id = Guid.NewGuid().ToString(),
                 Content = model.Content,
                 DateCreation = DateTime.Now,
                 DateChange = DateTime.Now,
-                BlogArticle = blogArticlesRepository.GetById(model.Id),
+                BlogArticle = ((BlogArticlesRepository)_blogArticlesRepository).GetById(model.BlogArticleId),
                 User = await userManager.FindByIdAsync(model.UserId)
             };
 
@@ -61,12 +66,24 @@ namespace BlogWebApp.DAL.Repository
 
         public IEnumerable<Comment> GetAll()
         {
-            return GetAll();
+            return base.GetAll();
         }
 
         public Comment GetById(string id)
         {
             return GetAll().FirstOrDefault(o => o.Id == id);
         }
+
+        public IEnumerable<Comment> GetAllByBlogArticleId(string blogArticleId)
+        {
+            BlogArticle blogArticle = ((BlogArticlesRepository)_blogArticlesRepository).GetIncludeCommentsById(blogArticleId);
+            if(blogArticle != null)
+            {
+                return blogArticle.Comments;
+            }
+
+            return null;
+        }
+
     }
 }

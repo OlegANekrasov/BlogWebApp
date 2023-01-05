@@ -1,0 +1,30 @@
+﻿@using BlogWebApp.BLL.ViewModels.Comment
+@model BlogArticleViewModel
+
+<table class="table">
+    <tbody>
+        @foreach (var item in Model.ListComments)
+        {
+            <tr>
+                <td>
+                    <div class="form-floating">
+                        <textarea asp-for="@item.Content" class="form-control" disabled style="height:100px;"></textarea>
+                    </div>
+                    <div class="form-floating">
+                        @Html.DisplayFor(modelItem => item.Author) @Html.DisplayFor(modelItem => item.DateChange)
+                    </div>
+                    <div class="form-floating">
+                        <a asp-action="Create" asp-route-Id="@item.Id" class="btn btn-sm btn-secondary"> Редактировать </a>
+                        <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-sm btn-danger"> Удалить </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create"
+   asp-route-blogArticleId="@Model.blogArticle.Id"
+   class="btn btn-primary">
+   Добавить комментарий
+</a>

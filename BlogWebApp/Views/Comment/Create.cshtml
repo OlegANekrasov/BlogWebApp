@@ -1,0 +1,26 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.Comment
+@model CreateCommentViewModel
+
+@{
+    ViewData["Title"] = "Комментарии";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Добавить комментарий</h2>
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="@Model.BlogArticleId" class="form-control" type="hidden" />
+            <input asp-for="@Model.UserId" class="form-control" type="hidden" />
+            <div class="form-floating">
+                <textarea asp-for="Content" class="form-control" style="height:150px;"></textarea>
+                <label asp-for="Content" class="form-label"></label>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
