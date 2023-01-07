@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
+using System.IO.Compression;
 
 namespace BlogWebApp.Controllers
 {
@@ -44,6 +46,41 @@ namespace BlogWebApp.Controllers
             return View("PersonalDataView", model);
         }
 
+        [HttpGet]
+        public ActionResult UploadImage(string id)
+        {
+            var model = new PhotoViewModel() { UserId = id };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UploadImage(PhotoViewModel model, IFormFile uploadImage)          
+        {
+            if (uploadImage != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await uploadImage.CopyToAsync(memoryStream);
+
+                    var user = await _userManager.FindByIdAsync(model.UserId);
+
+                    user.Image = memoryStream.ToArray();
+
+                    var result = await _userManager.UpdateAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError("", "Некорректные данные");
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Некорректные данные");
+            }
+
+            return RedirectToAction("PersonalDataView");
+        }
+
         [HttpPost]
         public async Task<IActionResult> PersonalDataView(UserEditViewModel model)
         {
@@ -62,8 +99,8 @@ namespace BlogWebApp.Controllers
             {
                 ModelState.AddModelError("", "Некорректные данные");
             }
-            
-            return View("PersonalDataView", model);
+
+            return RedirectToAction("PersonalDataView");
         }
 
         [HttpGet]

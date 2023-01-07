@@ -1,0 +1,66 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.Users
+@model PhotoViewModel
+
+@{
+    ViewBag.Title = "Фото";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    var outImage ="Foto";
+    var pathImage ="PhotoPath";
+    function OnChangeImage(obj)
+    {
+        if (FileReader)
+        {
+            var reader = new FileReader();
+            reader.readAsDataURL(obj.files[0]);
+            document.getElementById(pathImage).value=obj.files[0].name;
+            reader.onload = function (e) {
+                var image=new Image();
+                image.src=e.target.result;
+                image.onload = function () {
+                    document.getElementById(outImage).src=image.src;
+                };
+                }
+        }
+        else
+        {
+                // Not supported
+        }
+    }
+</script>
+
+<h2>Файл изображения</h2>
+
+<div>                
+    <p></p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="@Model.UserId" class="form-control" type="hidden" />
+            <input id="PhotoPath" asp-for="@Model.PhotoPath" class="form-control" type="hidden" />
+            <div class="form-floating">
+                <img id="Foto" style="height: 300px;">
+            </div>
+            <div class="form-floating">
+                <input type="file" name="uploadImage" accept=".jpg, .png" onChange="OnChangeImage(this);"/>
+            </div>
+            <div>                
+                <p></p>
+            </div>        
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+            <partial name="_ValidationScriptsPartial" />
+}
+
+
