@@ -65,8 +65,8 @@ builder.Services.AddAuthorization(options =>
         .Build();
 
     // Для проверки ролей на основе политик
-    options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("администратор"));
-    options.AddPolicy("RequireModeratorRole", policy => policy.RequireRole("модератор"));
+    options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Администратор"));
+    options.AddPolicy("RequireModeratorRole", policy => policy.RequireRole("Модератор"));
 });
 
 builder.Services.AddUnitOfWork();

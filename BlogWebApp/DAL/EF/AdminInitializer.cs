@@ -13,19 +13,20 @@ namespace BlogWebApp.DAL.EF
                 throw new Exception("roleManager null");
             }
 
-            if (!await roleManager.RoleExistsAsync("администратор"))
+            if (!await roleManager.RoleExistsAsync("Администратор"))
             {
-                await roleManager.CreateAsync(new ApplicationRole("администратор"));
+                await roleManager.CreateAsync(new ApplicationRole("Администратор", "Роль с максимальными возможностями в приложении"));
             }
 
-            if (!await roleManager.RoleExistsAsync("пользователь"))
+            if (!await roleManager.RoleExistsAsync("Пользователь"))
             {
-                await roleManager.CreateAsync(new ApplicationRole("пользователь", "стандартная роль приложения"));
+                await roleManager.CreateAsync(new ApplicationRole("Пользователь", "Стандартная роль приложения"));
             }
 
-            if (!await roleManager.RoleExistsAsync("модератор"))
+            if (!await roleManager.RoleExistsAsync("Модератор"))
             {
-                await roleManager.CreateAsync(new ApplicationRole("модератор"));
+                await roleManager.CreateAsync(new ApplicationRole("Модератор", 
+                    "Данная роль позволяет выполнять редактирование, удаление комментариев и статей в приложении"));
             }
 
             var userManager = serviceProvider.GetService<UserManager<User>>();

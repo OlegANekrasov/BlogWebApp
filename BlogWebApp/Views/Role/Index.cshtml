@@ -1,5 +1,38 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using BlogWebApp.BLL.ViewModels.Roles
+@model RoleListViewModel
+
 @{
+    ViewData["Title"] = "Роли";
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<form asp-action="Create" method="get">
+    <div class="form-actions no-color">
+        <p>
+            <input type="submit" value="Добавить роль" class="btn btn-secondary" />
+        </p>
+    </div>
+</form>
+
+@foreach (var item in Model.RoleList)
+{
+    <div class="no-color" style="width: 330px; height: 130px; border: 3px solid grey; border-radius: 10px; margin:20px 0px 5px 0px;">
+        <dl class="dl-horizontal">
+            <dd style="margin:10px 0px 10px 40px; color:cornflowerblue;">
+                @Html.DisplayFor(modelItem => item.Name)
+            </dd>
+            <dd style="margin:0px 0px 0px 10px;">
+                @Html.DisplayFor(modelItem => item.Description)
+            </dd>
+         </dl>
+    </div> 
+    <div>
+        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Изменить</a>
+        <text>  </text>
+        @if (!item.IsProgramRole)
+        {
+            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
+        }
+    </div>
 }

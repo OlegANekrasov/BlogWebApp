@@ -17,7 +17,7 @@
             Name = name;
             Description = description;  
 
-            if(name == "администратор" || name == "модератор" || name == "пользователь")
+            if(name == "Администратор" || name == "Модератор" || name == "Пользователь")
             {
                 IsProgramRole = true;
             }

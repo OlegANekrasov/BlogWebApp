@@ -11,7 +11,7 @@ using System.Data;
 
 namespace BlogWebApp.Controllers
 {
-    [Authorize(Roles = "администратор")]
+    [Authorize(Roles = "Администратор")]
     public class SettingsController : Controller
     {
         private readonly UserManager<User> _userManager;
