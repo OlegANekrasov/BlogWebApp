@@ -15,9 +15,9 @@ namespace BlogWebApp.Controllers
     public class SettingsController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-         public SettingsController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+         public SettingsController(UserManager<User> userManager, RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;

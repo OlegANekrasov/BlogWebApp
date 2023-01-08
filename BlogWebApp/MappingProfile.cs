@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BlogWebApp.BLL.Models;
 using BlogWebApp.BLL.ViewModels.BlogArticles;
-using BlogWebApp.BLL.ViewModels.Comment;
+using BlogWebApp.BLL.ViewModels.Comments;
 using BlogWebApp.BLL.ViewModels.Tags;
 using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Models;

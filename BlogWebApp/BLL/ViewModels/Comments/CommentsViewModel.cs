@@ -1,6 +1,6 @@
 ﻿using BlogWebApp.DAL.Models;
 
-namespace BlogWebApp.BLL.ViewModels.Comment
+namespace BlogWebApp.BLL.ViewModels.Comments
 {
     public class CommentsViewModel
     {

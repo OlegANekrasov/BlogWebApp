@@ -7,7 +7,7 @@ namespace BlogWebApp.DAL.EF
     {
         public static async Task Initialize(IServiceProvider serviceProvider)
         {
-            var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
+            var roleManager = serviceProvider.GetService<RoleManager<ApplicationRole>>();
             if (roleManager == null)
             {
                 throw new Exception("roleManager null");
@@ -15,17 +15,17 @@ namespace BlogWebApp.DAL.EF
 
             if (!await roleManager.RoleExistsAsync("администратор"))
             {
-                await roleManager.CreateAsync(new IdentityRole("администратор"));
+                await roleManager.CreateAsync(new ApplicationRole("администратор"));
             }
 
             if (!await roleManager.RoleExistsAsync("пользователь"))
             {
-                await roleManager.CreateAsync(new IdentityRole("пользователь"));
+                await roleManager.CreateAsync(new ApplicationRole("пользователь", "стандартная роль приложения"));
             }
 
             if (!await roleManager.RoleExistsAsync("модератор"))
             {
-                await roleManager.CreateAsync(new IdentityRole("модератор"));
+                await roleManager.CreateAsync(new ApplicationRole("модератор"));
             }
 
             var userManager = serviceProvider.GetService<UserManager<User>>();

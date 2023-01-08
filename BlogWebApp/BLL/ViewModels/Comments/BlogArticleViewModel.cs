@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace BlogWebApp.BLL.ViewModels.Comment
+namespace BlogWebApp.BLL.ViewModels.Comments
 {
     public class BlogArticleViewModel
     {

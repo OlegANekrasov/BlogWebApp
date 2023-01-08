@@ -23,12 +23,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="BlogArticle" asp-action="Index">Статьи</a>
+                            <a class="nav-link text-dark" style="margin-right:10px" asp-area="" asp-controller="BlogArticle" asp-action="Index">Статьи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" style="margin-right:10px" asp-area="" asp-controller="Tag" asp-action="Index">Теги</a>
                         </li>
                         @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorRole")).Succeeded)
                         {
                             <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Settings" asp-action="UserList">Пользователи</a>
+                                <a class="nav-link text-dark" style="margin-right:10px" asp-area="" asp-controller="Settings" asp-action="UserList">Пользователи</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" style="margin-right:10px" asp-area="" asp-controller="Role" asp-action="Index">Роли</a>
                             </li>
                         }                        
                     </ul>
