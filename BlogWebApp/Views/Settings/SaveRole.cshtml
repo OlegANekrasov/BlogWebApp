@@ -1,6 +1,6 @@
 ﻿@using BlogWebApp.Controllers
 @using BlogWebApp.BLL.ViewModels.Users
-@model ChangeUserRoleModel
+@model ChangeUserRoleViewModel
 
 @{
     ViewData["Title"] = "Настройки";
@@ -25,12 +25,16 @@
                 @Html.DisplayFor(model => model.Email)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.RoleName)
+                Роли:
             </dt>
-            <dd>
-                <select asp-for="@Model.RoleName" asp-items="@ViewBag.Roles">
-                </select>        
-            </dd>
+            @for (var i = 0; i < Model.Roles.Count; i++)
+            {
+                <dd>
+                     <input type="checkbox" asp-for="@Model.Roles[i].IsRoleAssigned" />    
+                     <label> @Model.Roles[i].Name </label>
+                     <input type="hidden" asp-for="@Model.Roles[i].Name" />
+                </dd>
+            }
         </dl>
         <button id="update-profile-button" type="submit" class="btn btn-lg btn-primary">Сохранить</button>
     </form>

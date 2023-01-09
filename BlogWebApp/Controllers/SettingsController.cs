@@ -38,7 +38,21 @@ namespace BlogWebApp.Controllers
                 var userRoles = await _userManager.GetRolesAsync(user);
                 if (userRoles.Any())
                 {
-                    string? roleName = userRoles.First();
+                    string? roleName = "";
+                    bool first = true;
+                    foreach (var role in userRoles.OrderBy(o => o))
+                    {
+                        if(first)
+                        {
+                            roleName = role;
+                            first = false;
+                        }
+                        else
+                        {
+                            roleName +=  (", " + role);
+                        }
+                    }
+
                     userList.Add(new UserListModel(Id, userName, email, roleName));
                 }
             }
@@ -139,23 +153,16 @@ namespace BlogWebApp.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             if (user != null && userRoles.Any())
             {
-                var model = new ChangeUserRoleModel()
-                {
-                    Id = id,
-                    Email = user.Email,
-                    UserName = user.FirstName + " " + user.MiddleName + " " + user.LastName,
-                    RoleName = userRoles.First()
-                };
-
                 var roles = _roleManager.Roles;
 
-                var selectListItem = new List<SelectListItem>();
+                var allRoles = new List<string>();
                 foreach (var role in roles)
                 {
-                    selectListItem.Add(new SelectListItem { Text = role.Name, Value = role.Name });
+                    allRoles.Add(role.Name);
                 }
 
-                ViewBag.Roles = selectListItem;
+                var useName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
+                var model = new ChangeUserRoleViewModel(id, useName, user.Email, userRoles, allRoles);
 
                 return View("SaveRole", model);
             }
@@ -164,7 +171,7 @@ namespace BlogWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRole(ChangeUserRoleModel model)
+        public async Task<IActionResult> SaveRole(ChangeUserRoleViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -177,7 +184,13 @@ namespace BlogWebApp.Controllers
                         await _userManager.RemoveFromRolesAsync(user, userRoles);
                     }
 
-                    await _userManager.AddToRoleAsync(user, model.RoleName);
+                    foreach (var item in model.Roles)
+                    {
+                        if(item.IsRoleAssigned)
+                        {
+                            await _userManager.AddToRoleAsync(user, item.Name);
+                        }
+                    }
                 }
                 else
                 {
