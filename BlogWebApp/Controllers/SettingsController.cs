@@ -34,6 +34,7 @@ namespace BlogWebApp.Controllers
                 string Id = user.Id;
                 string? userName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
                 string? email = user.Email;
+                byte[]? image = user.Image;
 
                 var userRoles = await _userManager.GetRolesAsync(user);
                 if (userRoles.Any())
@@ -53,7 +54,7 @@ namespace BlogWebApp.Controllers
                         }
                     }
 
-                    userList.Add(new UserListModel(Id, userName, email, roleName));
+                    userList.Add(new UserListModel(Id, userName, email, roleName, image));
                 }
             }
 

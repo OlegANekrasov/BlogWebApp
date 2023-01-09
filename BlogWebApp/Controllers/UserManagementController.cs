@@ -38,18 +38,89 @@ namespace BlogWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PersonalDataView()
+        public async Task<IActionResult> PersonalDataView(string id = null)
         {
-            var result = _userManager.GetUserAsync(User);
-            var model = _mapper.Map<UserEditViewModel>(result.Result);
+            User user = null;
+            if(id == null)
+            {
+                user = await _userManager.GetUserAsync(User);
+            }
+            else
+            {
+                user = await _userManager.FindByIdAsync(id);
+            }
+
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{id}'.");
+            }
+
+            var model = _mapper.Map<UserEditViewModel>(user);
 
             return View("PersonalDataView", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> PersonalDataView(UserEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                user.Convert(model);
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Некорректные данные");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Некорректные данные");
+            }
+
+            return RedirectToAction("PersonalDataView");
+        }
+
         [HttpGet]
-        public ActionResult UploadImage(string id)
+        public async Task<IActionResult> EditUserView(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{id}'.");
+            }
+
+            var model = _mapper.Map<UserEditViewModel>(user);
+
+            return View("EditUserView", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUserView(UserEditViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            user.Convert(model);
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Некорректные данные");
+            }
+
+            return RedirectToAction("EditUserView");
+        }
+
+        [HttpGet]
+        public ActionResult UploadImage(string id, string edit = null)
         {
             var model = new PhotoViewModel() { UserId = id };
+
+            if(edit != null)
+            {
+                model.IsEditUserView = true;
+            }
+
             return View(model);
         }
 
@@ -78,29 +149,14 @@ namespace BlogWebApp.Controllers
                 ModelState.AddModelError("", "Некорректные данные");
             }
 
-            return RedirectToAction("PersonalDataView");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> PersonalDataView(UserEditViewModel model)
-        {
-            if (ModelState.IsValid)
+            if(model.IsEditUserView)
             {
-                var user = await _userManager.FindByIdAsync(model.UserId);
-                user.Convert(model);
-
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError("", "Некорректные данные");
-                }
+                return RedirectToAction("EditUserView", new {id = model.UserId });
             }
             else
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                return RedirectToAction("PersonalDataView");
             }
-
-            return RedirectToAction("PersonalDataView");
         }
 
         [HttpGet]

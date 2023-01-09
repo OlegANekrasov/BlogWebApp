@@ -22,6 +22,9 @@
     <thead>
         <tr>
             <th>
+                
+            </th>
+            <th>
                 <a asp-action="UserList" asp-route-sortOrder="Email" asp-route-currentFilter="@ViewData["CurrentFilter"]">Login</a>
             </th>
             <th>
@@ -38,7 +41,13 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Email)
+                    @if (item.Image != null)
+                    {
+                        @Html.Raw("<img style='height:30px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(item.Image) + "\" />")
+                    }
+                </td>
+                <td>
+                    <a asp-controller="UserManagement" asp-action="EditUserView" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Email) </a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.UserName)
