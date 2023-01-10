@@ -14,6 +14,7 @@ namespace BlogWebApp
         {
             CreateMap<UserEditViewModel, User>();
             CreateMap<User, UserEditViewModel>().ForMember(x => x.UserId, opt => opt.MapFrom(c => c.Id));
+            CreateMap<User, UserViewModel>().ForMember(x => x.UserId, opt => opt.MapFrom(c => c.Id));
 
             CreateMap<CreateBlogArticleViewModel, AddBlogArticle>();
 

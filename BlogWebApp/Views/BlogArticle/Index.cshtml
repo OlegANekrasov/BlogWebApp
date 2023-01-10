@@ -55,7 +55,7 @@
                     <a asp-controller="Comment" asp-action="Index" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Title) </a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Author)
+                    <a asp-controller="UserManagement" asp-action="ShowUser" asp-route-userId="@item.UserId"> @Html.DisplayFor(modelItem => item.Author) </a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DateCreation)

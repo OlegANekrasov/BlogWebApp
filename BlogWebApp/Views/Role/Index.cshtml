@@ -17,22 +17,25 @@
 
 @foreach (var item in Model.RoleList)
 {
-    <div class="no-color" style="width: 330px; height: 130px; border: 3px solid grey; border-radius: 10px; margin:20px 0px 5px 0px;">
-        <dl class="dl-horizontal">
-            <dd style="margin:10px 0px 10px 40px; color:cornflowerblue;">
-                @Html.DisplayFor(modelItem => item.Name)
-            </dd>
-            <dd style="margin:0px 0px 0px 10px;">
-                @Html.DisplayFor(modelItem => item.Description)
-            </dd>
-         </dl>
-    </div> 
-    <div>
-        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Изменить</a>
-        <text>  </text>
-        @if (!item.IsProgramRole)
-        {
-            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
-        }
+    <h4> </h4> 
+    <div class="card" style="width: 24rem;">
+        <div class="card-header">
+            @Html.DisplayFor(modelItem => item.Name)
+        </div>
+        <div class="card-body">
+            @if (item.IsProgramRole)
+            {
+                <h6 class="card-title">Стандартная роль приложения</h6>
+            }
+
+            <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+
+            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Изменить</a>
+            <text>  </text>
+            @if (!item.IsProgramRole)
+            {
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
+            }
+        </div>
     </div>
 }

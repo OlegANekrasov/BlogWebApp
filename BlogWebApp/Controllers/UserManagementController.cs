@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogWebApp.BLL.Services;
 using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Extentions;
@@ -22,18 +23,25 @@ namespace BlogWebApp.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UserManagementController> _logger;
+        private readonly IUserService _userService;
         private readonly SignInManager<User> _signInManager;
 
         public static string PersonalData => "PersonalData";
         public static string About => "About";
         public static string ChangePassword => "ChangePassword";
 
-        public UserManagementController(UserManager<User> userManager, IMapper mapper, IUnitOfWork unitOfWork, ILogger<UserManagementController> logger, SignInManager<User> signInManager)
+        public UserManagementController(UserManager<User> userManager, 
+                                        IMapper mapper, 
+                                        IUnitOfWork unitOfWork, 
+                                        ILogger<UserManagementController> logger,
+                                        IUserService userService,
+                                        SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _userService = userService;
             _signInManager = signInManager;
         }
 
@@ -223,6 +231,19 @@ namespace BlogWebApp.Controllers
             }
 
             return View("AboutView", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ShowUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+
+            var model = _userService.GetUserViewModel(user);
+            return View("UserView", model);
         }
 
         public static string PersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, PersonalData);

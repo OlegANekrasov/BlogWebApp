@@ -74,6 +74,11 @@ namespace BlogWebApp.DAL.Repository
             return GetAll().FirstOrDefault(o => o.Id == id);
         }
 
+        public IEnumerable<Comment> GetAllByUserId(string id)
+        {
+            return GetAll().Where(o => o.UserId == id);
+        }
+
         public IEnumerable<Comment> GetAllByBlogArticleId(string blogArticleId)
         {
             BlogArticle blogArticle = ((BlogArticlesRepository)_blogArticlesRepository).GetIncludeCommentsById(blogArticleId);

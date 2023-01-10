@@ -77,7 +77,6 @@ namespace BlogWebApp.Controllers
                 return NotFound($"Не найдена роль с ID '{id}'.");
             }
 
-            role.Name= model.Name;
             role.Description= model.Description;
             await _roleManager.UpdateAsync(role);
 

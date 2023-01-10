@@ -11,5 +11,7 @@ namespace BlogWebApp.BLL.ViewModels.Comments
         public string DateChange { get; set; }
 
         public string Author { get; set; }
+
+        public string AuthorId { get; set; }
     }
 }

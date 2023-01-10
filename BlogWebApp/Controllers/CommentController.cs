@@ -66,7 +66,8 @@ namespace BlogWebApp.Controllers
                         Id= comment.Id,
                         Content = comment.Content,
                         Author = comment.User?.Email,
-                        DateChange = comment.DateChange.ToString("dd.MM.yyyy")
+                        AuthorId = comment.User?.Id,
+                        DateChange = comment.DateChange.ToString("dd.MM.yyyy HH:mm")
                     });
                 }
             }
