@@ -7,6 +7,15 @@
     ViewData["Title"] = "Пользователи";
 }
 <h1>@ViewData["Title"]</h1>
+<hr />
+
+<form asp-area="Identity" asp-page="/Account/Register">
+    <div class="form-actions no-color">
+        <p>
+            <input type="submit" value="Зарегистрировать пользователя" class="btn btn-secondary" />
+        </p>
+    </div>
+</form>
 
 <form asp-action="UserList" method="get">
     <div class="form-actions no-color">
