@@ -68,5 +68,11 @@ namespace BlogWebApp.BLL.Services
         {
             return ((TagsRepository)_tagsRepository).GetAll();
         }
+
+        public IEnumerable<Tag> GetAllIncludeBlogArticles()
+        {
+            return ((TagsRepository)_tagsRepository).GetAllIncludeBlogArticles();
+        }
+
     }
 }

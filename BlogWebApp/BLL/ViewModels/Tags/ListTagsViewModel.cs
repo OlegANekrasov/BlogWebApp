@@ -8,14 +8,33 @@ namespace BlogWebApp.BLL.ViewModels.Tags
         public List<TagViewModel> _tags;
         public string _blogArticleId;
 
-        public ListTagsViewModel(List<Tag> tag, string blogArticleId)
+        public ListTagsViewModel(List<Tag> tag, string blogArticleId = null, User user = null)
         {
             _blogArticleId = blogArticleId;
 
             _tags = new List<TagViewModel>();
             foreach (var item in tag) 
             {
-                _tags.Add(new TagViewModel(item.Id, item.Name));
+                TagViewModel tagViewModel;
+                if (user != null)
+                {
+                    var blogArticlesUserCount = item.BlogArticles.Where(o => o.UserId == user.Id).Count();
+                    var blogArticlesUser = blogArticlesUserCount.ToString();
+
+                    bool isUserUsingTag = false;
+                    if(blogArticlesUserCount == item.BlogArticles.Count())
+                    {
+                        isUserUsingTag = true;
+                    }
+
+                    tagViewModel = new TagViewModel(item.Id, item.Name, item.BlogArticles.Count().ToString(), blogArticlesUser, isUserUsingTag);
+                }
+                else
+                {
+                    tagViewModel = new TagViewModel(item.Id, item.Name, item.BlogArticles.Count().ToString());
+                }
+
+                _tags.Add(tagViewModel);
             }
         }
     }

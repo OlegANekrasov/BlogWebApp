@@ -16,24 +16,42 @@ namespace BlogWebApp.Controllers
         private readonly IBlogArticleService _blogArticleService;
         private readonly ITagService _tagService;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
-        public TagController(ITagService tagService, IBlogArticleService blogArticleService, IMapper mapper)
+        public TagController(ITagService tagService, IBlogArticleService blogArticleService, IMapper mapper, UserManager<User> userManager)
         {
             _tagService = tagService;
             _blogArticleService = blogArticleService;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public IActionResult Index(string id)
+        public async Task<IActionResult> Index(string id)
         {
-            var blogArticle = _blogArticleService.Get(id);
-            if (blogArticle == null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                return NotFound($"Не найдена статья с ID '{id}'.");
+                return NotFound($"Unable to load user with ID '{id}'.");
             }
 
-            var tags = blogArticle.Tags.ToList();
-            var model = new ListTagsViewModel(tags , id);
+            ListTagsViewModel model;
+
+            if (id != null)
+            {
+                var blogArticle = _blogArticleService.Get(id);
+                if (blogArticle == null)
+                {
+                    return NotFound($"Не найдена статья с ID '{id}'.");
+                }
+
+                var tags = blogArticle.Tags.OrderBy(o => o.Name).ToList();
+                model = new ListTagsViewModel(tags, id);
+            }
+            else
+            {
+                var tags = ((TagService)_tagService).GetAllIncludeBlogArticles().OrderBy(o => o.Name).ToList();
+                model = new ListTagsViewModel(tags, user: user);
+            }
 
             return View("Index", model);
         }
@@ -76,7 +94,7 @@ namespace BlogWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(string id, string blogArticleId)
+        public IActionResult Edit(string id, string blogArticleId = null)
         {
             var tag = _tagService.Get(id);
             if (tag == null)
@@ -119,7 +137,7 @@ namespace BlogWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(string id, string blogArticleId)
+        public IActionResult Delete(string id, string blogArticleId = null)
         {
             var tag = _tagService.Get(id);
             if (tag == null)

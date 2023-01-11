@@ -78,6 +78,11 @@ namespace BlogWebApp.DAL.Repository
             return base.GetAll();
         }
 
+        public IEnumerable<Tag> GetAllIncludeBlogArticles()
+        {
+            return Set.Include(c => c.BlogArticles);
+        }
+
         public Tag GetById(string id)
         {
             return GetAll().FirstOrDefault(o => o.Id == id);

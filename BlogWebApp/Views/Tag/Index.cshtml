@@ -5,6 +5,7 @@
     ViewData["Title"] = "Теги";
 }
 <h1>@ViewData["Title"]</h1>
+<hr />
 
 <a asp-action="Create"
    asp-route-blogArticleId="@Model._blogArticleId"
@@ -12,26 +13,23 @@
    Добавить тег
 </a>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Тег</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var tag in Model._tags)
-        {
-            <tr>
-                <td>
-                    @tag.Name
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-blogArticleId="@Model._blogArticleId" asp-route-id="@tag.Id">Изменить</a>
-                    <text> | </text>
-                    <a asp-action="Delete" asp-route-blogArticleId="@Model._blogArticleId" asp-route-id="@tag.Id">Удалить</a>
-                </td>
-             </tr>
-        }
-    </tbody>
-</table>
+@foreach (var tag in Model._tags)
+{
+    <h4> </h4> 
+    <div class="card" style="width: 24rem;">
+        <div class="card-header">
+            @Html.DisplayFor(modelItem => tag.Name)
+        </div>
+        <div class="card-body">
+            <p class="card-text">@Html.DisplayFor(modelItem => tag.BlogArticles)</p>
+            <p class="card-text">@Html.DisplayFor(modelItem => tag.BlogArticlesUser)</p>
+            
+            @if (tag.IsUserUsingTag)
+            {
+                <a asp-action="Edit" asp-route-id="@tag.Id" asp-route-blogArticleId="@Model._blogArticleId" class="btn btn-sm btn-outline-secondary">Изменить</a>
+                <text>  </text>
+                <a asp-action="Delete" asp-route-id="@tag.Id" asp-route-blogArticleId="@Model._blogArticleId" class="btn btn-sm btn-outline-danger">Удалить</a>
+            }
+        </div>
+    </div>
+}

@@ -1,6 +1,11 @@
 ﻿@using BlogWebApp.BLL.ViewModels.Comments
 @model BlogArticleViewModel
 
+@{
+    ViewData["Title"] = "Комментарии";
+}
+
+
 <table class="table">
     <tbody>
         @foreach (var item in Model.ListComments)

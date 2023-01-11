@@ -1,5 +1,6 @@
 ﻿using BlogWebApp.BLL.ViewModels.Roles;
 using BlogWebApp.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -7,6 +8,7 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.Controllers
 {
+    [Authorize(Roles = "Администратор")]
     public class RoleController : Controller
     {
         private readonly RoleManager<ApplicationRole> _roleManager;
