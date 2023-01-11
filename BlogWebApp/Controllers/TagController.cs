@@ -7,6 +7,7 @@ using BlogWebApp.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlogWebApp.Controllers
 {
@@ -67,29 +68,27 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateTagViewModel incomingmModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var id = incomingmModel.BlogArticleId;
-                var blogArticle = _blogArticleService.Get(id);
-                if (blogArticle == null)
-                {
-                    return NotFound($"Не найдена статья с ID '{id}'.");
-                }
-
-                var tags = blogArticle.Tags.ToList();
-                if(tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
-                {
-                    return Problem("Такой тег у статьи уже есть.");
-                }
-
-                var model = _mapper.Map<AddTag>(incomingmModel);
-                await _tagService.Add(model);
-            }
-            else
-            {
-                ModelState.AddModelError("", "Некорректные данные");
+                return View(incomingmModel);
             }
 
+            var id = incomingmModel.BlogArticleId;
+            var blogArticle = _blogArticleService.Get(id);
+            if (blogArticle == null)
+            {
+                return NotFound($"Не найдена статья с ID '{id}'.");
+            }
+
+            var tags = blogArticle.Tags.ToList();
+            if(tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
+            {
+                return Problem("Такой тег у статьи уже есть.");
+            }
+
+            var model = _mapper.Map<AddTag>(incomingmModel);
+            await _tagService.Add(model);
+            
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
         }
 
@@ -110,28 +109,26 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditTagViewModel incomingmModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var id = incomingmModel.BlogArticleId;
-                var blogArticle = _blogArticleService.Get(id);
-                if (blogArticle == null)
-                {
-                    return NotFound($"Не найдена статья с ID '{id}'.");
-                }
-
-                var tags = blogArticle.Tags.ToList();
-                if (tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
-                {
-                    return Problem("Такой тег у статьи уже есть.");
-                }
-
-                var model = _mapper.Map<EditTag>(incomingmModel);
-                await _tagService.Edit(model);
+                return View(incomingmModel);
             }
-            else
+
+            var id = incomingmModel.BlogArticleId;
+            var blogArticle = _blogArticleService.Get(id);
+            if (blogArticle == null)
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                return NotFound($"Не найдена статья с ID '{id}'.");
             }
+
+            var tags = blogArticle.Tags.ToList();
+            if (tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
+            {
+                return Problem("Такой тег у статьи уже есть.");
+            }
+
+            var model = _mapper.Map<EditTag>(incomingmModel);
+            await _tagService.Edit(model);
 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
         }

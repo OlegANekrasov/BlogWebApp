@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BlogWebApp.BLL.Services;
+using BlogWebApp.BLL.Validation.Tags;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Tags
@@ -8,6 +10,7 @@ namespace BlogWebApp.BLL.ViewModels.Tags
         [Required]
         [DataType(DataType.Text)]
         [Display(Name = "Название", Prompt = "Введите название")]
+        [TagName(ErrorMessage = "Название тега - одно слово.")]
         public string Name { get; set; }
 
         public string BlogArticleId { get; set; }
