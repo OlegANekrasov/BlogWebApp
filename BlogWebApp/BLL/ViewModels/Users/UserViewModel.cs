@@ -1,5 +1,7 @@
-﻿using BlogWebApp.DAL.Models;
+﻿using BlogWebApp.BLL.ViewModels.Roles;
+using BlogWebApp.DAL.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Users
@@ -48,5 +50,7 @@ namespace BlogWebApp.BLL.ViewModels.Users
         [DataType(DataType.Text)]
         [Display(Name = "Количество статей и комментариев")]
         public string? BlogArticles { get; set; }
+
+        public List<UserRole> Roles { get; set; } = new List<UserRole>();
     }
 }

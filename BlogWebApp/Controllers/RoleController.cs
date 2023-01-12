@@ -1,4 +1,6 @@
-﻿using BlogWebApp.BLL.ViewModels.Roles;
+﻿using AutoMapper;
+using BlogWebApp.BLL.ViewModels.Roles;
+using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,10 +14,12 @@ namespace BlogWebApp.Controllers
     public class RoleController : Controller
     {
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IMapper _mapper;
 
-        public RoleController(RoleManager<ApplicationRole> roleManager)
+        public RoleController(RoleManager<ApplicationRole> roleManager, IMapper mapper)
         {
             _roleManager = roleManager;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
@@ -66,6 +70,7 @@ namespace BlogWebApp.Controllers
             {
                 model.IsProgramRole = true;
             }
+
             return View(model);
         }
 
@@ -117,6 +122,20 @@ namespace BlogWebApp.Controllers
             await _roleManager.DeleteAsync(role);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Show(string name)
+        {
+            var role = await _roleManager.FindByNameAsync(name);
+            if (role == null)
+            {
+                return NotFound($"Не найдена роль с именем '{name}'.");
+            }
+
+            var model = _mapper.Map<ShowRoleViewModel>(role);
+
+            return View(model);
         }
     }
 }

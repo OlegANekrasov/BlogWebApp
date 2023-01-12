@@ -20,6 +20,16 @@
             <div>                
                 <p></p>
             </div>
+            
+            <div>
+                <label class="form-label">Роль: </label>
+                @foreach (var role in Model.Roles)
+                {
+                    <a asp-controller="Role" asp-action="Show" asp-route-name="@role.Name" class="btn btn-sm btn-secondary"> @Html.DisplayFor(modelItem => role.Name) </a>
+                }
+                <p></p>
+            </div>
+            
             <div class="form-floating">
                 <input asp-for="FirstName" class="form-control" disabled />
                 <label asp-for="FirstName" class="form-label"></label>

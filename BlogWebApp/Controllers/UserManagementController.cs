@@ -242,7 +242,7 @@ namespace BlogWebApp.Controllers
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
-            var model = _userService.GetUserViewModel(user);
+            var model = await _userService.GetUserViewModel(user);
             return View("UserView", model);
         }
 

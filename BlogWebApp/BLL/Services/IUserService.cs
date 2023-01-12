@@ -5,6 +5,6 @@ namespace BlogWebApp.BLL.Services
 {
     public interface IUserService
     {
-        UserViewModel GetUserViewModel(User user);
+        Task<UserViewModel> GetUserViewModel(User user);
     }
 }
