@@ -53,13 +53,10 @@ namespace BlogWebApp.DAL.Repository
 
         public async Task Delete(DelTag model)
         {
-            var tag = GetByIdIncludeBlogArticles(model.Id);
+            var tag = GetById(model.Id);
             if (tag != null)
             {
-                if(tag.BlogArticles.Count() == 0)
-                {
-                    await Delete(tag);
-                }
+                await Delete(tag);
             }
         }
 

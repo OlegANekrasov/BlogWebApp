@@ -1,4 +1,6 @@
-﻿using BlogWebApp.DAL.Models;
+﻿using BlogWebApp.BLL.ViewModels.Tags;
+using BlogWebApp.BLL.ViewModels.Users;
+using BlogWebApp.DAL.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
@@ -16,11 +18,17 @@ namespace BlogWebApp.BLL.ViewModels.BlogArticles
         [Display(Name = "Описание", Prompt = "Введите описание")]
         public string Description { get; set; }
 
-        [Required]
-        [DataType(DataType.Text)]
-        [Display(Name = "Теги статей (через запятую)", Prompt = "Введите теги статей")]
-        public string Tags { get; set; }
+        public List<TagSelected> Tags { get; set; } = new List<TagSelected>();
 
         public string UserId { get; set; }
+
+        public CreateBlogArticleViewModel() { }
+        public CreateBlogArticleViewModel(List<Tag> tags)
+        {
+            foreach (var item in tags)
+            {
+                Tags.Add(new TagSelected() { Name = item.Name });
+            }
+        }
     }
 }

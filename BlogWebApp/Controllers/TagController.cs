@@ -14,45 +14,27 @@ namespace BlogWebApp.Controllers
     [Authorize]
     public class TagController : Controller
     {
-        private readonly IBlogArticleService _blogArticleService;
         private readonly ITagService _tagService;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
 
-        public TagController(ITagService tagService, IBlogArticleService blogArticleService, IMapper mapper, UserManager<User> userManager)
+        public TagController(ITagService tagService, IMapper mapper, UserManager<User> userManager)
         {
             _tagService = tagService;
-            _blogArticleService = blogArticleService;
             _mapper = mapper;
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{id}'.");
+                return NotFound($"Unable to load user.");
             }
 
-            ListTagsViewModel model;
-
-            if (id != null)
-            {
-                var blogArticle = _blogArticleService.Get(id);
-                if (blogArticle == null)
-                {
-                    return NotFound($"Не найдена статья с ID '{id}'.");
-                }
-
-                var tags = blogArticle.Tags.OrderBy(o => o.Name).ToList();
-                model = new ListTagsViewModel(tags, id);
-            }
-            else
-            {
-                var tags = ((TagService)_tagService).GetAllIncludeBlogArticles().OrderBy(o => o.Name).ToList();
-                model = new ListTagsViewModel(tags, user: user);
-            }
+            var tags = ((TagService)_tagService).GetAllIncludeBlogArticles().OrderBy(o => o.Name).ToList();
+            var model = new ListTagsViewModel(tags, user: user);
 
             return View("Index", model);
         }
@@ -60,7 +42,7 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public IActionResult Create(string blogArticleId)
         {
-            CreateTagViewModel model = new CreateTagViewModel("", blogArticleId);
+            CreateTagViewModel model = new CreateTagViewModel();
             
             return View("Create", model);
         }
@@ -73,27 +55,21 @@ namespace BlogWebApp.Controllers
                 return View(incomingmModel);
             }
 
-            var id = incomingmModel.BlogArticleId;
-            var blogArticle = _blogArticleService.Get(id);
-            if (blogArticle == null)
+            var tags = _tagService.GetAll().ToList();
+            if (tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
             {
-                return NotFound($"Не найдена статья с ID '{id}'.");
-            }
-
-            var tags = blogArticle.Tags.ToList();
-            if(tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
-            {
-                return Problem("Такой тег у статьи уже есть.");
+                ModelState.AddModelError(string.Empty, "Такой тег уже есть.");
+                return View(incomingmModel);
             }
 
             var model = _mapper.Map<AddTag>(incomingmModel);
             await _tagService.Add(model);
             
-            return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public IActionResult Edit(string id, string blogArticleId = null)
+        public IActionResult Edit(string id)
         {
             var tag = _tagService.Get(id);
             if (tag == null)
@@ -101,7 +77,7 @@ namespace BlogWebApp.Controllers
                 return NotFound($"Не найден тег с ID '{id}'.");
             }
 
-            EditTagViewModel model = new EditTagViewModel(id, tag.Name, blogArticleId);
+            EditTagViewModel model = new EditTagViewModel(id, tag.Name);
 
             return View("Edit", model);
         }
@@ -114,23 +90,17 @@ namespace BlogWebApp.Controllers
                 return View(incomingmModel);
             }
 
-            var id = incomingmModel.BlogArticleId;
-            var blogArticle = _blogArticleService.Get(id);
-            if (blogArticle == null)
+            var tags = _tagService.GetAll().ToList();
+            if (tags.FirstOrDefault(o => o.Name == incomingmModel.Name && o.Id != incomingmModel.Id) != null)
             {
-                return NotFound($"Не найдена статья с ID '{id}'.");
-            }
-
-            var tags = blogArticle.Tags.ToList();
-            if (tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
-            {
-                return Problem("Такой тег у статьи уже есть.");
+                ModelState.AddModelError(string.Empty, "Такой тег уже есть.");
+                return View(incomingmModel);
             }
 
             var model = _mapper.Map<EditTag>(incomingmModel);
             await _tagService.Edit(model);
 
-            return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
+            return RedirectToAction("Index");
         }
 
         [HttpGet]

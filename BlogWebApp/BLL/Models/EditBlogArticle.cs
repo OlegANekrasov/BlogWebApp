@@ -1,4 +1,7 @@
-﻿namespace BlogWebApp.BLL.Models
+﻿using BlogWebApp.BLL.ViewModels.Tags;
+using BlogWebApp.DAL.Models;
+
+namespace BlogWebApp.BLL.Models
 {
     public class EditBlogArticle
     {
@@ -11,5 +14,24 @@
         public string Tags { get; set; }
 
         public string UserId { get; set; }
+
+        public EditBlogArticle() { }
+
+        public void SetTags(List<TagSelected> tags) 
+        {
+            bool first = true;
+            foreach (var tag in tags)
+            {
+                if (first)
+                {
+                    Tags += tag.Name;
+                    first = false;
+                }
+                else
+                {
+                    Tags += (", " + tag.Name);
+                }
+            }
+        }
     }
 }

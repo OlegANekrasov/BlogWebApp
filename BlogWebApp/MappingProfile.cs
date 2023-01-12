@@ -21,8 +21,8 @@ namespace BlogWebApp
 
             CreateMap<CreateBlogArticleViewModel, AddBlogArticle>();
 
-            CreateMap<BlogArticle, EditBlogArticleViewModel>();
-            CreateMap<EditBlogArticleViewModel, EditBlogArticle>();
+            CreateMap<BlogArticle, EditBlogArticleViewModel>().ForMember(x => x.Tags, opt => opt.Ignore());
+            CreateMap<EditBlogArticleViewModel, EditBlogArticle>().ForMember(x => x.Tags, opt => opt.Ignore());
 
             CreateMap<DeleteBlogArticleViewModel, DelBlogArticle>();
             CreateMap<BlogArticle, DeleteBlogArticleViewModel>().ForMember(x => x.UserName, opt => opt.MapFrom(c => c.User.Email))

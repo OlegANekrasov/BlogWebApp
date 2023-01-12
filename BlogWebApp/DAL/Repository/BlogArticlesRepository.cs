@@ -31,15 +31,7 @@ namespace BlogWebApp.DAL.Repository
                 };
 
                 await Create(item);
-
-                List<string> listNewTags = new List<string>();
-                string[] tags = model.Tags.Split(',');
-                foreach (var tag in tags)
-                {
-                    listNewTags.Add(tag.Trim());
-                }
-
-                await AddTags(listNewTags, item);
+                await AddTags(model.Tags, item);
             }
         }
 

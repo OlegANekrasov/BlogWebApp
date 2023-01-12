@@ -21,42 +21,17 @@ namespace BlogWebApp.BLL.Services
         
         public async Task Add(AddTag model)
         {
-            Tag tag = await((TagsRepository)_tagsRepository).Add(model);
-            
-            List<string> listTags = new List<string> { model.Name };
-
-            BlogArticle blogArticle = await _blogArticlesRepository.Get(model.BlogArticleId);
-            ((BlogArticlesRepository)_blogArticlesRepository).AddTags(listTags, blogArticle);
+            await((TagsRepository)_tagsRepository).Add(model);
         }
 
         public async Task Delete(DelTag model)
         {
-            var tag = Get(model.Id);
-            var blogArticle = await _blogArticlesRepository.Get(model.BlogArticleId);
-            if (blogArticle != null && tag != null)
-            {
-                List<string> listTags = new List<string> { tag.Name };
-                ((BlogArticlesRepository)_blogArticlesRepository).DelTags(listTags, blogArticle);
-            }
-
             await ((TagsRepository)_tagsRepository).Delete(model);
         }
 
         public async Task Edit(EditTag model)
         {
-            var tag = Get(model.Id);
-            if(tag.BlogArticles.Count() == 1)
-            {
-                await ((TagsRepository)_tagsRepository).Edit(model);
-            }
-            else
-            {
-                var modelDel = _mapper.Map<DelTag>(model);
-                await Delete(modelDel);
-
-                var modelAdd = _mapper.Map<AddTag>(model);
-                await Add(modelAdd);
-            }
+            await ((TagsRepository)_tagsRepository).Edit(model);
         }
 
         public Tag Get(string id)

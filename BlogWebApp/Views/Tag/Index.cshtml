@@ -10,7 +10,7 @@
 <a asp-action="Create"
    asp-route-blogArticleId="@Model._blogArticleId"
    class="btn btn-secondary">
-   Добавить тег
+   Добавить
 </a>
 
 @foreach (var tag in Model._tags)
@@ -26,9 +26,9 @@
             
             @if (tag.IsUserUsingTag)
             {
-                <a asp-action="Edit" asp-route-id="@tag.Id" asp-route-blogArticleId="@Model._blogArticleId" class="btn btn-sm btn-outline-secondary">Изменить</a>
+                <a asp-action="Edit" asp-route-id="@tag.Id" class="btn btn-sm btn-outline-secondary">Изменить</a>
                 <text>  </text>
-                <a asp-action="Delete" asp-route-id="@tag.Id" asp-route-blogArticleId="@Model._blogArticleId" class="btn btn-sm btn-outline-danger">Удалить</a>
+                <a asp-action="Delete" asp-route-id="@tag.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
             }
         </div>
     </div>

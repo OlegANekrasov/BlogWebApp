@@ -12,14 +12,5 @@ namespace BlogWebApp.BLL.ViewModels.Tags
         [Display(Name = "Название", Prompt = "Введите название")]
         [TagName(ErrorMessage = "Название тега - одно слово.")]
         public string Name { get; set; }
-
-        public string BlogArticleId { get; set; }
-
-        public CreateTagViewModel() { }
-        public CreateTagViewModel(string name, string blogArticleId)
-        {
-            Name = name;
-            BlogArticleId = blogArticleId;  
-        }
     }
 }

@@ -18,12 +18,14 @@ namespace BlogWebApp.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IBlogArticleService _blogArticleService;
         private readonly IMapper _mapper;
+        private readonly ITagService _tagService;
 
-        public BlogArticleController(UserManager<User> userManager, IBlogArticleService blogArticleService, IMapper mapper)
+        public BlogArticleController(UserManager<User> userManager, IBlogArticleService blogArticleService, IMapper mapper, ITagService tagService)
         {
             _userManager = userManager;
             _blogArticleService = blogArticleService;
             _mapper = mapper;
+            _tagService = tagService;
         }
 
         public async Task<IActionResult> Index(int? pageNumber, string sortOrder, string currentFilter, string searchString, string currentFilter1, string searchString1)
@@ -99,7 +101,8 @@ namespace BlogWebApp.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            CreateBlogArticleViewModel model = new CreateBlogArticleViewModel() { UserId = user.Id };
+            var tags = ((TagService)_tagService).GetAll().OrderBy(o => o.Name).ToList();
+            CreateBlogArticleViewModel model = new CreateBlogArticleViewModel(tags) { UserId = user.Id };
 
             return View("Create", model);
         }
@@ -107,23 +110,18 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateBlogArticleViewModel incomingmModel)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByIdAsync(incomingmModel.UserId);
+            var user = await _userManager.FindByIdAsync(incomingmModel.UserId);
 
-                if (user == null)
-                {
-                    ModelState.AddModelError("", "Некорректные данные");
-                }
-                else
-                {
-                    var model = _mapper.Map<AddBlogArticle>(incomingmModel);
-                    await _blogArticleService.Add(model, user);
-                }
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Некорректные данные");
             }
             else
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                var model = _mapper.Map<AddBlogArticle>(incomingmModel);
+                model.Tags = incomingmModel.Tags.Where(o => o.IsTagSelected).Select(o => o.Name).ToList();
+                
+                await _blogArticleService.Add(model, user);
             }
 
             return RedirectToAction("Index");
@@ -149,9 +147,10 @@ namespace BlogWebApp.Controllers
                 return NotFound("Страница не доступна.");
             }
 
+            var tags = ((TagService)_tagService).GetAll().Select(o => o.Name).OrderBy(o => o).ToList();
             var model = _mapper.Map<EditBlogArticleViewModel>(blogArticle);
-            model.Tags = ((BlogArticleService)_blogArticleService).SetTagsInModel(blogArticle.Tags);
-
+            
+            model.SetTags(tags, blogArticle.Tags.Select(o => o.Name).OrderBy(o => o).ToList()); 
             model.UserId = user.Id;
             
             return View("Edit", model);
@@ -160,15 +159,10 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditBlogArticleViewModel incomingmModel)
         {
-            if (ModelState.IsValid)
-            {
-                var model = _mapper.Map<EditBlogArticle>(incomingmModel);
-                await _blogArticleService.Edit(model);
-            }
-            else
-            {
-                ModelState.AddModelError("", "Некорректные данные");
-            }
+            var model = _mapper.Map<EditBlogArticle>(incomingmModel);
+            model.SetTags(incomingmModel.Tags.Where(o => o.IsTagSelected).ToList());
+
+            await _blogArticleService.Edit(model);
 
             return RedirectToAction("Index");
         }
