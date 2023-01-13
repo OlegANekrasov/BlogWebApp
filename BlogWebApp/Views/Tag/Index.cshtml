@@ -1,4 +1,7 @@
 ﻿@using BlogWebApp.BLL.ViewModels.Tags
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
 @model ListTagsViewModel
 
 @{
@@ -24,7 +27,7 @@
             <p class="card-text">@Html.DisplayFor(modelItem => tag.BlogArticles)</p>
             <p class="card-text">@Html.DisplayFor(modelItem => tag.BlogArticlesUser)</p>
             
-            @if (tag.IsUserUsingTag)
+            @if (tag.IsUserUsingTag || (await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorRole")).Succeeded)
             {
                 <a asp-action="Edit" asp-route-id="@tag.Id" class="btn btn-sm btn-outline-secondary">Изменить</a>
                 <text>  </text>

@@ -65,8 +65,8 @@ namespace BlogWebApp.Controllers
                     {
                         Id= comment.Id,
                         Content = comment.Content,
-                        Author = comment.User?.Email,
-                        AuthorId = comment.User?.Id,
+                        Author = (await _userManager.FindByIdAsync(comment.UserId)).Email,
+                        AuthorId = comment.UserId,
                         DateChange = comment.DateChange.ToString("dd.MM.yyyy HH:mm")
                     });
                 }

@@ -142,7 +142,7 @@ namespace BlogWebApp.Controllers
                 return NotFound($"Не найдена статья с ID '{id}'.");
             }
 
-            if(user != blogArticle.User)
+            if(user != blogArticle.User && !User.IsInRole("Администратор") && !User.IsInRole("Модератор"))
             {
                 return NotFound("Страница не доступна.");
             }
@@ -182,7 +182,7 @@ namespace BlogWebApp.Controllers
                 return NotFound($"Не найдена статья с ID '{id}'.");
             }
 
-            if (user != blogArticle.User)
+            if (user != blogArticle.User && !User.IsInRole("Администратор") && !User.IsInRole("Модератор"))
             {
                 return NotFound("Страница не доступна.");
             }
