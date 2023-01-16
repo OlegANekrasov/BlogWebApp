@@ -5,6 +5,7 @@ namespace BlogWebApp.BLL.ViewModels.Comments
     public class CommentsViewModel
     {
         public string Id { get; set; }
+        public string blogArticleId { get; set; }
 
         public string Content { get; set; }
 

@@ -1,9 +1,12 @@
 ﻿using BlogWebApp.BLL.Models;
+using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.Comments;
+using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
 using Microsoft.AspNetCore.Identity;
+using System.Drawing.Printing;
 
 namespace BlogWebApp.BLL.Services
 {
@@ -11,11 +14,13 @@ namespace BlogWebApp.BLL.Services
     {
         private readonly IRepository<Comment> _commentsRepository;
         private readonly IBlogArticleService _blogArticleService;
+        private readonly UserManager<User> _userManager;
 
-        public CommentService(IRepository<Comment> commentsRepository, IBlogArticleService blogArticleService)
+        public CommentService(IRepository<Comment> commentsRepository, IBlogArticleService blogArticleService, UserManager<User> userManager)
         {
             _commentsRepository = commentsRepository;
             _blogArticleService = blogArticleService;
+            _userManager = userManager;
         }
         
         public async Task Add(AddComment model)
@@ -54,7 +59,7 @@ namespace BlogWebApp.BLL.Services
             return null;
         }
 
-        public BlogArticleViewModel GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author)
+        public async Task<BlogArticleViewModel> GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author, int pageNumber, int pageSize)
         {
             BlogArticleViewModel model = new BlogArticleViewModel()
             {
@@ -67,26 +72,31 @@ namespace BlogWebApp.BLL.Services
                     UserName = author.UserName,
                     UserId = author.Id,
                     DateCreation = blogArticle.DateCreation.ToString("dd.MM.yyyy")
-                },
-
-                ListComments = new List<CommentsViewModel>()
+                }
+               
             };
 
-            var listComments = GetAllByBlogArticleId(id);
-            if (listComments != null)
+            var listComments = new List<CommentsViewModel>();
+
+            var listBlogArticleComments = GetAllByBlogArticleId(id);
+            if (listBlogArticleComments != null)
             {
-                foreach (var comment in listComments)
+                foreach (var comment in listBlogArticleComments.OrderBy(o => o.DateCreation))
                 {
-                    model.ListComments.Add(new CommentsViewModel()
+                    listComments.Add(new CommentsViewModel()
                     {
                         Id = comment.Id,
                         Content = comment.Content,
-                        Author = author.Email,
+                        Author = (await _userManager.FindByIdAsync(comment.UserId)).Email,
                         AuthorId = comment.UserId,
-                        DateChange = comment.DateChange.ToString("dd.MM.yyyy HH:mm")
+                        DateChange = comment.DateChange.ToString("dd.MM.yyyy HH:mm"),
+                        blogArticleId = id,
                     });
                 }
             }
+
+            var userQueryable = listComments.AsQueryable();
+            model.PaginatedListComments = PaginatedList<CommentsViewModel>.CreateAsync(userQueryable, pageNumber, pageSize);
 
             return model;
         }

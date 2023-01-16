@@ -1,36 +1,58 @@
-﻿@using BlogWebApp.BLL.ViewModels.Comments
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels
+@using BlogWebApp.BLL.ViewModels.Comments
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
 @model BlogArticleViewModel
 
 @{
     ViewData["Title"] = "Комментарии";
 }
 
+@{
+    var prevDisabled = !Model.PaginatedListComments.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.PaginatedListComments.HasNextPage ? "disabled" : "";
+}
 
-<table class="table">
-    <tbody>
-        @foreach (var item in Model.ListComments)
+<a asp-action="Index"
+   asp-route-blogArticleId="@Model.blogArticle.Id"
+   asp-route-pageNumber="@(Model.PaginatedListComments.PageIndex - 1)"
+   class="btn btn-primary @prevDisabled">
+   <i class="glyphicon glyphicon-chevron-left"></i>
+   Назад
+</a>
+<a asp-action="Index"
+   asp-route-blogArticleId="@Model.blogArticle.Id"
+   asp-route-pageNumber="@(Model.PaginatedListComments.PageIndex + 1)"
+   class="btn btn-primary @nextDisabled">
+   Вперед
+   <i class="glyphicon glyphicon-chevron-right"></i>
+</a>
+
+<h4> </h4>
+
+@foreach (var item in Model.PaginatedListComments)
+{
+    <div class="card"style="width: 36rem;">
+      <div class="card-body">
+        <p class="card-text">@item.Content</p>
+        <a asp-controller="UserManagement" asp-action="ShowUser" asp-route-userId="@item.AuthorId"> @Html.DisplayFor(modelItem => item.Author) </a>
+        @Html.DisplayFor(modelItem => item.DateChange)
+        @if (ViewBag.UserEmail == item.Author || (await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorRole")).Succeeded
+                                              || (await AuthorizationService.AuthorizeAsync(User, "RequireModeratorRole")).Succeeded)
         {
-            <tr>
-                <td>
-                    <div class="form-floating">
-                        <textarea asp-for="@item.Content" class="form-control" disabled style="height:100px;"></textarea>
-                    </div>
-                    <div class="form-floating">
-                        <a asp-controller="UserManagement" asp-action="ShowUser" asp-route-userId="@item.AuthorId"> @Html.DisplayFor(modelItem => item.Author) </a>
-                        @Html.DisplayFor(modelItem => item.DateChange)
-                    </div>
-                    <div class="form-floating">
-                        <a asp-action="Edit" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-secondary"> Редактировать </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-danger"> Удалить </a>
-                    </div>
-                </td>
-            </tr>
+            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-outline-secondary"> Редактировать </a>
+            <a asp-action="Delete" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-outline-danger"> Удалить </a>
         }
-    </tbody>
-</table>
+      </div>
+    </div>    
+}
+
+<h4> </h4>
 
 <a asp-action="Create"
    asp-route-blogArticleId="@Model.blogArticle.Id"
-   class="btn btn-primary">
+   class="btn btn-secondary">
    Добавить комментарий
 </a>

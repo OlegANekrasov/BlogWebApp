@@ -26,8 +26,14 @@ namespace BlogWebApp.Controllers
             _mapper = mapper;
         }
         
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index(string id, int? pageNumber)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return NotFound($"Не найден пользователь с ID '{_userManager.GetUserId(User)}'.");
+            }
+
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
@@ -43,7 +49,10 @@ namespace BlogWebApp.Controllers
 
             await ((BlogArticleService)_blogArticleService).IncCountOfVisit(id);
 
-            BlogArticleViewModel model = ((CommentService)_commentService).GetBlogArticleViewModel(id, blogArticle, user);
+            var pageSize = 5;
+            BlogArticleViewModel model = await ((CommentService)_commentService).GetBlogArticleViewModel(id, blogArticle, user, pageNumber ?? 1, pageSize);
+
+            ViewBag.UserEmail = currentUser.Email;
             return View(model);
         }
 
