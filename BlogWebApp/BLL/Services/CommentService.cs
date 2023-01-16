@@ -59,7 +59,7 @@ namespace BlogWebApp.BLL.Services
             return null;
         }
 
-        public async Task<BlogArticleViewModel> GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author, int pageNumber, int pageSize)
+        public async Task<BlogArticleViewModel> GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author, int? pageNumber, int pageSize)
         {
             BlogArticleViewModel model = new BlogArticleViewModel()
             {
@@ -96,7 +96,13 @@ namespace BlogWebApp.BLL.Services
             }
 
             var userQueryable = listComments.AsQueryable();
-            model.PaginatedListComments = PaginatedList<CommentsViewModel>.CreateAsync(userQueryable, pageNumber, pageSize);
+            if(pageNumber == null)
+            {
+                var count = userQueryable.Count();
+                pageNumber = (int)Math.Ceiling(count / (double)pageSize);
+            }
+
+            model.PaginatedListComments = PaginatedList<CommentsViewModel>.CreateAsync(userQueryable, (int)pageNumber, pageSize);
 
             return model;
         }
