@@ -38,40 +38,12 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"Не найден пользователь с ID '{id}'.");
+                return NotFound($"Не найден пользователь с ID '{userId}'.");
             }
 
-            BlogArticleViewModel model = new BlogArticleViewModel()
-            {
-                blogArticle = new BlogArticleModel()
-                {
-                    Id= id,
-                    Title = blogArticle.Title,
-                    Description = blogArticle.Description,
-                    Tags = ((BlogArticleService)_blogArticleService).SetTagsInModel(blogArticle.Tags),
-                    UserName = user.UserName,
-                    DateCreation = blogArticle.DateCreation.ToString("dd.MM.yyyy")
-                },
+            await ((BlogArticleService)_blogArticleService).IncCountOfVisit(id);
 
-                ListComments = new List<CommentsViewModel>()
-            };
-
-            var listComments = ((CommentService)_commentService).GetAllByBlogArticleId(id);
-            if(listComments != null)
-            {
-                foreach(var comment in listComments)
-                {
-                    model.ListComments.Add(new CommentsViewModel()
-                    {
-                        Id= comment.Id,
-                        Content = comment.Content,
-                        Author = (await _userManager.FindByIdAsync(comment.UserId)).Email,
-                        AuthorId = comment.UserId,
-                        DateChange = comment.DateChange.ToString("dd.MM.yyyy HH:mm")
-                    });
-                }
-            }
-
+            BlogArticleViewModel model = ((CommentService)_commentService).GetBlogArticleViewModel(id, blogArticle, user);
             return View(model);
         }
 

@@ -2,35 +2,22 @@
 @using BlogWebApp.BLL.ViewModels.Comments
 @model BlogArticleModel
 
-<h1>@Html.DisplayFor(model => model.Title)</h1>
-
 <div>
-    <form id="changerole-form" method="post">
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
-            <dd>
+    <div class="card">
+        <div class="card-header">
+            @Html.DisplayFor(model => model.Title)
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
                 @Html.DisplayFor(model => model.Description)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Tags)
-            </dt>
-            <dd>
+            </li>
+            <li class="list-group-item">
                 @Html.DisplayFor(model => model.Tags)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.UserName)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.UserName)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.DateCreation)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.DateCreation)
-            </dd>
-        </dl>
-    </form>
+            </li>
+            <li class="list-group-item">
+                <a asp-controller="UserManagement" asp-action="ShowUser" asp-route-userId="@Model.UserId"> 
+                                        @Html.DisplayFor(model => model.UserName) </a> @Html.DisplayFor(model => model.DateCreation)
+            </li>
+        </ul>
+    </div>
 </div>

@@ -19,6 +19,8 @@ namespace BlogWebApp.BLL.ViewModels.BlogArticles
 
         public bool IsEdit { get; set; } = false;
 
+        public int CountOfVisit { get; set; }
+
         public BlogArticleViewModel(BlogArticle blogArticle, User user)
         {
             Id = blogArticle.Id;
@@ -26,8 +28,9 @@ namespace BlogWebApp.BLL.ViewModels.BlogArticles
             DateCreation = blogArticle.DateCreation.ToString("dd.MM.yyyy");
             UserId = blogArticle.UserId;
             Author = blogArticle.User.Email;
+            CountOfVisit = blogArticle.CountOfVisit ?? 0;
 
-            if(user == blogArticle.User) IsEdit = true;
+            if (user == blogArticle.User) IsEdit = true;
 
             bool first = true;
             var tags = blogArticle.Tags;

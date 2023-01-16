@@ -145,6 +145,14 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        public async Task IncCountOfVisit(BlogArticle blogArticle)
+        {
+            if (blogArticle != null)
+            {
+                await Update(blogArticle);
+            }
+        }
+
         public IEnumerable<BlogArticle> GetAll()
         {
             return base.GetAll();

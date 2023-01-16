@@ -49,6 +49,9 @@
             <th>
                 Теги
             </th>
+            <th>
+                Просмотров
+            </th>
            <th></th>
         </tr>
     </thead>
@@ -67,6 +70,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Tags)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CountOfVisit)
                 </td>
                 <td>
                     @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorRole")).Succeeded ||

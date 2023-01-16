@@ -85,5 +85,18 @@ namespace BlogWebApp.BLL.Services
 
             return tagStr;
         }
+
+        public async Task IncCountOfVisit(string id)
+        {
+            var blogArticle = ((BlogArticlesRepository)_blogArticlesRepository).GetById(id);
+
+            if (blogArticle != null)
+            {
+                var countOfVisit = blogArticle.CountOfVisit ?? 0;
+                blogArticle.CountOfVisit = ++countOfVisit;
+
+                await ((BlogArticlesRepository)_blogArticlesRepository).IncCountOfVisit(blogArticle);
+            }
+        }
     }
 }
