@@ -21,8 +21,9 @@
     <div class="form-actions no-color">
         <p>
             Поиск по Login: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="submit" value="Найти" class="btn btn-secondary" /> |
-            <a asp-action="UserList">Отменить поиск</a>
+            <input type="submit" value="Найти" class="btn btn-secondary" /> 
+            <text>   </text>
+            <a asp-action="UserList" class="btn btn-secondary">Отменить поиск</a>
         </p>
     </div>
 </form>
@@ -65,9 +66,9 @@
                     @Html.DisplayFor(modelItem => item.RoleName)
                 </td>
                 <td>
-                    <a asp-action="SaveRole" asp-route-id="@item.Id">Изменить роль</a>
-                    <text> | </text>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                    <a asp-action="SaveRole" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Изменить роль</a>
+                    <text>   </text>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
                 </td>
             </tr>
         }

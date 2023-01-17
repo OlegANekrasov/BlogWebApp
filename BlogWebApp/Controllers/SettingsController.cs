@@ -106,13 +106,8 @@ namespace BlogWebApp.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             if (user != null && userRoles.Any())
             {
-                var model = new UserDeleteViewModel()
-                {
-                    Id = id,
-                    Email = user.Email,
-                    UserName = user.FirstName + " " + user.MiddleName + " " + user.LastName,
-                    RoleName = userRoles.First()
-                };
+                var userName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
+                var model = new UserDeleteViewModel(id, userName, user.Email, userRoles);
 
                 return View("Delete", model);
             }
