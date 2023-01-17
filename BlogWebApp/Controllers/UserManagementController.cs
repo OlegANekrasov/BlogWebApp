@@ -60,7 +60,7 @@ namespace BlogWebApp.Controllers
 
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
             }
 
             var model = _mapper.Map<UserEditViewModel>(user);
@@ -71,20 +71,13 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> PersonalDataView(UserEditViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByIdAsync(model.UserId);
-                user.Convert(model);
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            user.Convert(model);
 
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError("", "Некорректные данные");
-                }
-            }
-            else
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
             }
 
             return RedirectToAction("PersonalDataView");
@@ -96,7 +89,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
             }
 
             var model = _mapper.Map<UserEditViewModel>(user);
@@ -113,7 +106,7 @@ namespace BlogWebApp.Controllers
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
             }
 
             return RedirectToAction("EditUserView");
@@ -148,13 +141,13 @@ namespace BlogWebApp.Controllers
                     var result = await _userManager.UpdateAsync(user);
                     if (!result.Succeeded)
                     {
-                        ModelState.AddModelError("", "Некорректные данные");
+                        return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
                     }
                 }
             }
             else
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка загрузки файла." });
             }
 
             if(model.IsEditUserView)
@@ -183,7 +176,7 @@ namespace BlogWebApp.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
-                    return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                    return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
                 }
 
                 var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
@@ -214,20 +207,13 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AboutView(UserEditViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByIdAsync(model.UserId);
-                user.Convert(model);
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            user.Convert(model);
 
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError("", "Некорректные данные");
-                }
-            }
-            else
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
             }
 
             return View("AboutView", model);
@@ -239,7 +225,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{userId}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
             }
 
             var model = await _userService.GetUserViewModel(user);

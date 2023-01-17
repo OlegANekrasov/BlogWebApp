@@ -4,6 +4,7 @@ using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using NuGet.Protocol.Core.Types;
 
 namespace BlogWebApp.BLL.Services
@@ -97,6 +98,26 @@ namespace BlogWebApp.BLL.Services
 
                 await ((BlogArticlesRepository)_blogArticlesRepository).IncCountOfVisit(blogArticle);
             }
+        }
+
+        public IEnumerable<BlogArticle> SortOrder(IEnumerable<BlogArticle> blogArticle, string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "Title":
+                    blogArticle = blogArticle.OrderBy(s => s.Title).ToList();
+                    break;
+                case "Author":
+                    blogArticle = blogArticle.OrderBy(s => s.User?.Email).ToList();
+                    break;
+                case "DateCreation":
+                    blogArticle = blogArticle.OrderByDescending(s => s.DateCreation).ToList();
+                    break;
+                default:
+                    blogArticle = blogArticle.OrderByDescending(s => s.DateCreation).ToList();
+                    break;
+            }
+            return blogArticle;
         }
     }
 }

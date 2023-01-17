@@ -31,20 +31,20 @@ namespace BlogWebApp.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
             {
-                return NotFound($"Не найден пользователь с ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
-                return NotFound($"Не найдена статья с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена статья с ID '{id}'." });
             }
 
             var userId = blogArticle.UserId;
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"Не найден пользователь с ID '{userId}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
             }
 
             await ((BlogArticleService)_blogArticleService).IncCountOfVisit(id);
@@ -62,7 +62,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Не найден пользователь с ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             CreateCommentViewModel model = new CreateCommentViewModel("", blogArticleId, user.Id); 
@@ -81,6 +81,7 @@ namespace BlogWebApp.Controllers
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
+                return View(incomingmModel);
             }
 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
@@ -92,7 +93,7 @@ namespace BlogWebApp.Controllers
             var comment = _commentService.Get(id);
             if (comment == null)
             {
-                return NotFound($"Не найден комментарий с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
             }
 
             EditCommentViewModel model = new EditCommentViewModel(comment.Content, id, blogArticleId);
@@ -111,6 +112,7 @@ namespace BlogWebApp.Controllers
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
+                return View(incomingmModel);
             }
 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
@@ -122,7 +124,7 @@ namespace BlogWebApp.Controllers
             var comment = _commentService.Get(id);
             if (comment == null)
             {
-                return NotFound($"Не найден комментарий с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
             }
 
             DeleteCommentViewModel model = new DeleteCommentViewModel(comment.Content, id, blogArticleId);

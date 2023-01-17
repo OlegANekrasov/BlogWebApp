@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Roles
@@ -17,5 +18,18 @@ namespace BlogWebApp.BLL.ViewModels.Roles
         [DataType(DataType.Text)]
         [Display(Name = "Описание", Prompt = "Введите описание")]
         public string Description { get; set; }
+
+        public EditRoleViewModel() { }
+        public EditRoleViewModel(string id, string name, string description)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+
+            if (Name == "Администратор" || Name == "Модератор" || Name == "Пользователь")
+            {
+                IsProgramRole = true;
+            }
+        }
     }
 }

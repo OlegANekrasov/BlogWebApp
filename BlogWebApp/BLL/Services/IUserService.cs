@@ -6,5 +6,6 @@ namespace BlogWebApp.BLL.Services
     public interface IUserService
     {
         Task<UserViewModel> GetUserViewModel(User user);
+        Task<List<UserListModel>> CreateUserListModel(IQueryable<User> users);
     }
 }

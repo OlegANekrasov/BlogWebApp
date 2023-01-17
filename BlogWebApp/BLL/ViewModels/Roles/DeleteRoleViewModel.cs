@@ -16,5 +16,13 @@ namespace BlogWebApp.BLL.ViewModels.Roles
         [DataType(DataType.Text)]
         [Display(Name = "Описание", Prompt = "Введите описание")]
         public string Description { get; set; }
+
+        public DeleteRoleViewModel() { }
+        public DeleteRoleViewModel(string id, string name, string description)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var tags = ((TagService)_tagService).GetAllIncludeBlogArticles().OrderBy(o => o.Name).ToList();
@@ -40,7 +40,7 @@ namespace BlogWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create(string blogArticleId)
+        public IActionResult Create()
         {
             CreateTagViewModel model = new CreateTagViewModel();
             
@@ -56,7 +56,7 @@ namespace BlogWebApp.Controllers
             }
 
             var tags = _tagService.GetAll().ToList();
-            if (tags.FirstOrDefault(o => o.Name == incomingmModel.Name) != null)
+            if (tags.FirstOrDefault(o => o.Name.ToUpper() == incomingmModel.Name.ToUpper()) != null)
             {
                 ModelState.AddModelError(string.Empty, "Такой тег уже есть.");
                 return View(incomingmModel);
@@ -74,7 +74,7 @@ namespace BlogWebApp.Controllers
             var tag = _tagService.Get(id);
             if (tag == null)
             {
-                return NotFound($"Не найден тег с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден тег с ID '{id}'." });
             }
 
             EditTagViewModel model = new EditTagViewModel(id, tag.Name);
@@ -91,7 +91,7 @@ namespace BlogWebApp.Controllers
             }
 
             var tags = _tagService.GetAll().ToList();
-            if (tags.FirstOrDefault(o => o.Name == incomingmModel.Name && o.Id != incomingmModel.Id) != null)
+            if (tags.FirstOrDefault(o => o.Name.ToUpper() == incomingmModel.Name.ToUpper() && o.Id != incomingmModel.Id) != null)
             {
                 ModelState.AddModelError(string.Empty, "Такой тег уже есть.");
                 return View(incomingmModel);
@@ -109,7 +109,7 @@ namespace BlogWebApp.Controllers
             var tag = _tagService.Get(id);
             if (tag == null)
             {
-                return NotFound($"Не найден тег с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден тег с ID '{id}'." });
             }
 
             DeleteTagViewModel model = new DeleteTagViewModel(id, tag.Name, blogArticleId);
@@ -124,7 +124,7 @@ namespace BlogWebApp.Controllers
             var tag = _tagService.Get(id);
             if (tag == null)
             {
-                return NotFound($"Не найден тег с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден тег с ID '{id}'." });
             }
 
             var model = _mapper.Map<DelTag>(incomingmModel);

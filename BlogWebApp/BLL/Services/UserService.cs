@@ -43,5 +43,60 @@ namespace BlogWebApp.BLL.Services
 
             return model;
         }
+
+        public async Task<List<UserListModel>> CreateUserListModel(IQueryable<User> users)
+        {
+            var userList = new List<UserListModel>();
+            foreach (var user in users)
+            {
+                string Id = user.Id;
+                string? userName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
+                string? email = user.Email;
+                byte[]? image = user.Image;
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+                if (userRoles.Any())
+                {
+                    string? roleName = "";
+                    bool first = true;
+                    foreach (var role in userRoles.OrderBy(o => o))
+                    {
+                        if (first)
+                        {
+                            roleName = role;
+                            first = false;
+                        }
+                        else
+                        {
+                            roleName += (", " + role);
+                        }
+                    }
+
+                    userList.Add(new UserListModel(Id, userName, email, roleName, image));
+                }
+            }
+
+            return userList;
+        }
+
+        public List<UserListModel> SortOrder(List<UserListModel> userList, string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "Username":
+                    userList = userList.OrderBy(s => s.UserName).ToList();
+                    break;
+                case "Email":
+                    userList = userList.OrderBy(s => s.Email).ToList();
+                    break;
+                case "RoleName":
+                    userList = userList.OrderBy(s => s.RoleName).ToList();
+                    break;
+                default:
+                    userList = userList.OrderBy(s => s.UserName).ToList();
+                    break;
+            }
+            return userList;
+        }
     }
 }

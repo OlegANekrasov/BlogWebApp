@@ -56,21 +56,10 @@ namespace BlogWebApp.Controllers
             var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
             if (role == null)
             {
-                return NotFound($"Не найдена роль с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
             }
 
-            var model = new EditRoleViewModel() 
-            {
-                Id = id,
-                Name = role.Name,
-                Description = role.Description
-            };
-
-            if (role.Name == "Администратор" || role.Name == "Модератор" || role.Name == "Пользователь")
-            {
-                model.IsProgramRole = true;
-            }
-
+            var model = new EditRoleViewModel(id, role.Name, role.Description); 
             return View(model);
         }
 
@@ -81,9 +70,10 @@ namespace BlogWebApp.Controllers
             var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
             if (role == null)
             {
-                return NotFound($"Не найдена роль с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
             }
 
+            role.Name = model.Name;
             role.Description= model.Description;
             await _roleManager.UpdateAsync(role);
 
@@ -96,16 +86,10 @@ namespace BlogWebApp.Controllers
             var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
             if (role == null)
             {
-                return NotFound($"Не найдена роль с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
             }
 
-            var model = new DeleteRoleViewModel()
-            {
-                Id = id,
-                Name = role.Name,
-                Description = role.Description
-            };
-
+            var model = new DeleteRoleViewModel(id, role.Name, role.Description);
             return View(model);
         }
 
@@ -116,7 +100,7 @@ namespace BlogWebApp.Controllers
             var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
             if (role == null)
             {
-                return NotFound($"Не найдена роль с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
             }
 
             await _roleManager.DeleteAsync(role);
@@ -130,7 +114,7 @@ namespace BlogWebApp.Controllers
             var role = await _roleManager.FindByNameAsync(name);
             if (role == null)
             {
-                return NotFound($"Не найдена роль с именем '{name}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с именем '{name}'." });
             }
 
             var model = _mapper.Map<ShowRoleViewModel>(role);

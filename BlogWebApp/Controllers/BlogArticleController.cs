@@ -33,7 +33,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var all_blogArticles = ((BlogArticleService)_blogArticleService).GetAllIncludeTags();
@@ -65,23 +65,8 @@ namespace BlogWebApp.Controllers
             }
 
             ViewData["CurrentSort"] = sortOrder;
-
-            switch (sortOrder)
-            {
-                case "Title":
-                    all_blogArticles = all_blogArticles.OrderBy(s => s.Title).ToList();
-                    break;
-                case "Author":
-                    all_blogArticles = all_blogArticles.OrderBy(s => s.User?.Email).ToList();
-                    break;
-                case "DateCreation":
-                    all_blogArticles = all_blogArticles.OrderByDescending(s => s.DateCreation).ToList();
-                    break;
-                default:
-                    all_blogArticles = all_blogArticles.OrderByDescending(s => s.DateCreation).ToList();
-                    break;
-            }
-
+            all_blogArticles = ((BlogArticleService)_blogArticleService).SortOrder(all_blogArticles, sortOrder);
+            
             var pageSize = 5;
 
             BlogArticleListViewModel blogArticleListViewModel = new BlogArticleListViewModel(all_blogArticles, user);
@@ -98,7 +83,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var tags = ((TagService)_tagService).GetAll().OrderBy(o => o.Name).ToList();
@@ -110,11 +95,11 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateBlogArticleViewModel incomingmModel)
         {
-            var user = await _userManager.FindByIdAsync(incomingmModel.UserId);
-
+            var userId = incomingmModel.UserId;
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
             }
             else
             {
@@ -133,7 +118,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var blogArticle = _blogArticleService.Get(id);
@@ -173,13 +158,13 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
-                return NotFound($"Не найдена статья с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена статья с ID '{id}'." });
             }
 
             if (user != blogArticle.User && !User.IsInRole("Администратор") && !User.IsInRole("Модератор"))
@@ -200,7 +185,7 @@ namespace BlogWebApp.Controllers
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
-                return NotFound($"Не найдена статья с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена статья с ID '{id}'." });
             }
 
             var model = _mapper.Map<DelBlogArticle>(incomingmModel);
