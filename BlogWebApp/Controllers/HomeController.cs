@@ -25,8 +25,25 @@ namespace BlogWebApp.Controllers
             return View();
         }
 
-        public IActionResult SuccessfullyRegistered()
+        public IActionResult SuccessfullyRegistered()       
         {
+            return View();
+        }
+
+        public IActionResult AccessIsDenied() 
+        {
+            return View();
+        }
+
+        [Route("/NotFound")]
+        public IActionResult ResourceNotFound()
+        {
+            return View();
+        }
+
+        public IActionResult SomethingWentWrong(string str)
+        {
+            ViewBag.Message = str;
             return View();
         }
 

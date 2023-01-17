@@ -107,6 +107,16 @@ else
     app.UseHsts();
 }
 
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 404)
+    {
+        context.Request.Path = "/NotFound";
+        await next();
+    }
+});
+
 app.UseHttpsRedirection();
 
 var cachePeriod = "0";
@@ -126,6 +136,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

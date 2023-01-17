@@ -139,12 +139,12 @@ namespace BlogWebApp.Controllers
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
-                return NotFound($"Не найдена статья с ID '{id}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена статья с ID '{id}'." });
             }
 
             if(user != blogArticle.User && !User.IsInRole("Администратор") && !User.IsInRole("Модератор"))
             {
-                return NotFound("Страница не доступна.");
+                return Redirect("~/Home/AccessIsDenied");
             }
 
             var tags = ((TagService)_tagService).GetAll().Select(o => o.Name).OrderBy(o => o).ToList();
@@ -184,7 +184,7 @@ namespace BlogWebApp.Controllers
 
             if (user != blogArticle.User && !User.IsInRole("Администратор") && !User.IsInRole("Модератор"))
             {
-                return NotFound("Страница не доступна.");
+                return Redirect("~/Home/AccessIsDenied");
             }
 
             var model = _mapper.Map<DeleteBlogArticleViewModel>(blogArticle);
