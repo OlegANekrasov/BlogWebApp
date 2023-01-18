@@ -71,11 +71,22 @@ namespace BlogWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateCommentViewModel incomingmModel)
+        public async Task<IActionResult> Create(CreateCommentViewModel incomingmModel, IFormFile uploadImage)
         {
+            ModelState.Remove("uploadImage");  
             if (ModelState.IsValid)
             {
                 var model = _mapper.Map<AddComment>(incomingmModel);
+
+                if (uploadImage != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await uploadImage.CopyToAsync(memoryStream);
+                        model.Image = memoryStream.ToArray();
+                    }
+                }
+
                 await _commentService.Add(model);
             }
             else
@@ -96,17 +107,28 @@ namespace BlogWebApp.Controllers
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
             }
 
-            EditCommentViewModel model = new EditCommentViewModel(comment.Content, id, blogArticleId);
+            EditCommentViewModel model = new EditCommentViewModel(comment.Content, id, blogArticleId, comment.Image);
 
             return View("Edit", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(EditCommentViewModel incomingmModel)
+        public async Task<IActionResult> Edit(EditCommentViewModel incomingmModel, IFormFile uploadImage)
         {
+            ModelState.Remove("uploadImage");
             if (ModelState.IsValid)
             {
                 var model = _mapper.Map<EditComment>(incomingmModel);
+
+                if (uploadImage != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await uploadImage.CopyToAsync(memoryStream);
+                        model.Image = memoryStream.ToArray();
+                    }
+                }
+
                 await _commentService.Edit(model);
             }
             else
@@ -127,7 +149,7 @@ namespace BlogWebApp.Controllers
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
             }
 
-            DeleteCommentViewModel model = new DeleteCommentViewModel(comment.Content, id, blogArticleId);
+            DeleteCommentViewModel model = new DeleteCommentViewModel(comment.Content, id, blogArticleId, comment.Image);
 
             return View("Delete", model);
         }

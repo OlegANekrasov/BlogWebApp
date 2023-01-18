@@ -87,6 +87,7 @@ namespace BlogWebApp.BLL.Services
                     {
                         Id = comment.Id,
                         Content = comment.Content,
+                        Image = comment.Image,
                         Author = (await _userManager.FindByIdAsync(comment.UserId)).Email,
                         AuthorId = comment.UserId,
                         DateChange = comment.DateChange.ToString("dd.MM.yyyy HH:mm"),

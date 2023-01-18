@@ -47,7 +47,10 @@ $(function(){
             <input asp-for="Image" class="form-control" type="hidden" />
             <input asp-for="About" class="form-control" type="hidden" />
             <div class="form-floating">
-                @Html.Raw("<img style='height:150px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.Image) + "\" />")
+                @if (Model.Image != null)
+                {
+                    @Html.Raw("<img style='height:150px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.Image) + "\" />")
+                }
                 <a asp-action="UploadImage" asp-route-id="@Model.UserId" class="btn btn-sm btn-secondary"> Загрузить фото </a>
             </div>
             <div>                

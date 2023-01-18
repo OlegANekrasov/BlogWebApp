@@ -36,6 +36,10 @@
 {
     <div class="card"style="width: 36rem;">
       <div class="card-body">
+        @if (item.Image != null)
+        {
+            @Html.Raw("<img style='height:120px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(item.Image) + "\" />")
+        }
         <p class="card-text">@item.Content</p>
         <a asp-controller="UserManagement" asp-action="ShowUser" asp-route-userId="@item.AuthorId"> @Html.DisplayFor(modelItem => item.Author) </a>
         @Html.DisplayFor(modelItem => item.DateChange)

@@ -26,6 +26,7 @@ namespace BlogWebApp.DAL.Repository
             {
                 Id = Guid.NewGuid().ToString(),
                 Content = model.Content,
+                Image= model.Image,
                 DateCreation = DateTime.Now,
                 DateChange = DateTime.Now,
                 BlogArticle = ((BlogArticlesRepository)_blogArticlesRepository).GetById(model.BlogArticleId),
@@ -45,6 +46,12 @@ namespace BlogWebApp.DAL.Repository
                 if (comment.Content != model.Content)
                 {
                     comment.Content = model.Content;
+                    edit = true;
+                }
+
+                if (comment.Image != model.Image)
+                {
+                    comment.Image = model.Image;
                     edit = true;
                 }
 

@@ -7,15 +7,48 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script>
+    var outImage ="Foto";
+    function OnChangeImage(obj)
+    {
+        if (FileReader)
+        {
+            var reader = new FileReader();
+            reader.readAsDataURL(obj.files[0]);
+            reader.onload = function (e) {
+                var image=new Image();
+                image.src=e.target.result;
+                image.onload = function () {
+                    document.getElementById(outImage).src=image.src;
+                };
+            }
+        }
+        else
+        {
+                // Not supported
+        }
+    }
+</script>
+
 <h2>Изменить комментарий</h2>
 <hr />
 
 <div class="row">
     <div class="col-md-6">
-        <form id="profile-form" method="post">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input asp-for="@Model.Id" class="form-control" type="hidden" />
             <input asp-for="@Model.BlogArticleId" class="form-control" type="hidden" />
+            <input asp-for="@Model.Image" class="form-control" type="hidden" />
+            <div class="form-floating">
+                <img id="Foto" style="height: 300px;">
+            </div>
+            <div class="form-floating">
+                <input type="file" name="uploadImage" accept=".jpg, .png" onChange="OnChangeImage(this);"/>
+            </div>
+            <div>                
+                <p></p>
+            </div>        
             <div class="form-floating">
                 <textarea asp-for="Content" class="form-control" style="height:150px;"></textarea>
                 <label asp-for="Content" class="form-label"></label>

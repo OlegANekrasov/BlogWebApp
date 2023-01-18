@@ -9,6 +9,8 @@ namespace BlogWebApp.BLL.ViewModels.Comments
 
         public string Content { get; set; }
 
+        public byte[]? Image { get; set; }
+
         public string DateChange { get; set; }
 
         public string Author { get; set; }
