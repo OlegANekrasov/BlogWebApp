@@ -1,4 +1,5 @@
 ﻿using BlogWebApp.BLL.Models;
+using BlogWebApp.BLL.ViewModels.Tags;
 using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.BLL.Services
@@ -10,5 +11,8 @@ namespace BlogWebApp.BLL.Services
         Task Add(AddTag model);
         Task Edit(EditTag model);
         Task Delete(DelTag model);
+
+        ListTagsViewModel GetListTagsViewModel();
+        ListTagsViewModel GetListTagsViewModel(User user);
     }
 }

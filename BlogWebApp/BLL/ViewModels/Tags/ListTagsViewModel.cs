@@ -8,6 +8,7 @@ namespace BlogWebApp.BLL.ViewModels.Tags
         public List<TagViewModel> _tags;
         public string _blogArticleId;
 
+        public ListTagsViewModel() { }
         public ListTagsViewModel(List<Tag> tag, string blogArticleId = null, User user = null)
         {
             _blogArticleId = blogArticleId;

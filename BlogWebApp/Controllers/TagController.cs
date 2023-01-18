@@ -18,7 +18,7 @@ namespace BlogWebApp.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
 
-        public TagController(ITagService tagService, IMapper mapper, UserManager<User> userManager)
+        public TagController(ITagService tagService, UserManager<User> userManager, IMapper mapper)
         {
             _tagService = tagService;
             _mapper = mapper;
@@ -30,11 +30,10 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+                //return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
-            var tags = ((TagService)_tagService).GetAllIncludeBlogArticles().OrderBy(o => o.Name).ToList();
-            var model = new ListTagsViewModel(tags, user: user);
+            var model = _tagService.GetListTagsViewModel(user);
 
             return View("Index", model);
         }

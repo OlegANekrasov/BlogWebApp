@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlogWebApp.BLL.Models;
+using BlogWebApp.BLL.ViewModels.Tags;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
@@ -49,5 +50,20 @@ namespace BlogWebApp.BLL.Services
             return ((TagsRepository)_tagsRepository).GetAllIncludeBlogArticles();
         }
 
+        public ListTagsViewModel GetListTagsViewModel()
+        {
+            var tags = GetAllIncludeBlogArticles().OrderBy(o => o.Name).ToList();
+
+            var model = new ListTagsViewModel(tags);
+            return model;
+        }
+
+        public ListTagsViewModel GetListTagsViewModel(User user) 
+        {
+            var tags = GetAllIncludeBlogArticles().OrderBy(o => o.Name).ToList();
+            
+            var model = new ListTagsViewModel(tags, user: user);
+            return model;
+        }
     }
 }
