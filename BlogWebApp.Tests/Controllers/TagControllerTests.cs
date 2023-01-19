@@ -1,4 +1,5 @@
-﻿using BlogWebApp.BLL.Services;
+﻿using AutoMapper;
+using BlogWebApp.BLL.Services;
 using BlogWebApp.BLL.ViewModels.Tags;
 using BlogWebApp.Controllers;
 using BlogWebApp.DAL.Interfaces;
@@ -12,8 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace BlogWebApp.Tests.Controllers
 {
@@ -23,12 +26,23 @@ namespace BlogWebApp.Tests.Controllers
         public async Task IndexActionModelIsComplete()
         {
             // Arrange - устанавливает начальные условия для выполнения теста
+            var user = GetUser();
+
             var mock = new Mock<ITagService>();
-            mock.Setup(m => m.GetListTagsViewModel()).Returns(GetTestListTags());
+            mock.Setup(m => m.GetListTagsViewModel(user)).Returns(GetTestListTags());
+
+            var identity = new GenericIdentity("some name", "test");
+            var contextUser = new ClaimsPrincipal(identity);
 
             var fakeUserManager = new Mock<FakeUserManager>();
+            fakeUserManager.Setup(m => m.GetUserAsync(contextUser).Result).Returns(user);
+            
             var controller = new TagController(mock.Object, fakeUserManager.Object, null);
-             
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = contextUser }
+            };
+            
             // Act - выполняет тест (обычно представляет одну строку кода)
             var result = await controller.Index();
 
@@ -36,6 +50,11 @@ namespace BlogWebApp.Tests.Controllers
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<ListTagsViewModel>(viewResult.ViewData.Model);
             Assert.Equal(3, model._tags.Count());
+        }
+
+        private User GetUser()
+        {
+            return new User() { Id = Guid.NewGuid().ToString(), Email = "Test@mail.ru" };
         }
 
         private ListTagsViewModel GetTestListTags()
@@ -59,9 +78,7 @@ namespace BlogWebApp.Tests.Controllers
         public void CreateActionModelIsComplete()
         {
             // Arrange - устанавливает начальные условия для выполнения теста
-            var mock = new Mock<ITagService>();
-            var fakeUserManager = new Mock<FakeUserManager>();
-            var controller = new TagController(mock.Object, fakeUserManager.Object, null);
+            var controller = new TagController(null, null, null);
 
             // Act - выполняет тест (обычно представляет одну строку кода)
             var result = controller.Create();
@@ -70,21 +87,290 @@ namespace BlogWebApp.Tests.Controllers
             var viewResult = Assert.IsType<ViewResult>(result);
             Assert.IsAssignableFrom<CreateTagViewModel>(viewResult.ViewData.Model);
         }
-    }
 
-    public class FakeUserManager : UserManager<User>
-    {
-        public FakeUserManager()
-            : base(
-                  new Mock<IUserStore<User>>().Object,
-                  new Mock<Microsoft.Extensions.Options.IOptions<IdentityOptions>>().Object,
-                  new Mock<IPasswordHasher<User>>().Object,
-                  new IUserValidator<User>[0],
-                  new IPasswordValidator<User>[0],
-                  new Mock<ILookupNormalizer>().Object,
-                  new Mock<IdentityErrorDescriber>().Object,
-                  new Mock<IServiceProvider>().Object,
-                  new Mock<ILogger<UserManager<User>>>().Object)
-        { }
+        [Fact]
+        public async Task CreatePost_ReturnsBadRequestResult_WhenModelStateIsInvalid_EmptyName()
+        {
+            // Arrange
+            var controller = new TagController(null, null, null);
+            controller.ModelState.AddModelError("Name", "Required");
+            var createTagViewModel = new CreateTagViewModel();
+
+            // Act
+            var result = await controller.Create(createTagViewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<CreateTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        [Fact]
+        public async Task CreatePost_ReturnsBadRequestResult_WhenModelStateIsInvalid_FewWordsInName()
+        {
+            // Arrange
+            var controller = new TagController(null, null, null);
+            controller.ModelState.AddModelError("Name", "TagName");
+            
+            var createTagViewModel = new CreateTagViewModel() { Name = "Few Words" };
+
+            // Act
+            var result = await controller.Create(createTagViewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<CreateTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        [Fact]
+        public async Task CreatePost_ReturnsBadRequestResult_WhenThisNameAlreadyExists()
+        {
+            // Arrange
+            var mock = new Mock<ITagService>();
+            mock.Setup(m => m.GetAll()).Returns(GetTags());
+
+            var controller = new TagController(mock.Object, null, null);
+            controller.ModelState.Clear();
+
+            var createTagViewModel = new CreateTagViewModel() { Name = "Разное" };
+
+            // Act
+            var result = await controller.Create(createTagViewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<CreateTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        private IEnumerable<Tag> GetTags()
+        {
+            yield return new Tag { Name = "Разное" };
+        }
+
+        [Fact]
+        public async Task CreatePost_ReturnsRedirectAndAddsTag_WhenModelStateIsValid()
+        {
+            // Arrange
+            var mock = new Mock<ITagService>();
+            mock.Setup(m => m.GetAll()).Returns(GetTags());
+
+            var mockMapper = new Mock<IMapper>(); 
+
+            var controller = new TagController(mock.Object, null, mockMapper.Object);
+            controller.ModelState.Clear();
+
+            var createTagViewModel = new CreateTagViewModel() { Name = "Что-то" };
+
+            // Act
+            var result = await controller.Create(createTagViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Null(redirectToActionResult.ControllerName);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public void Edit_ReturnsRedirect_WhenTagNotFoundById()
+        {
+            // Arrange
+            var id = Guid.NewGuid().ToString();
+            var mock = new Mock<ITagService>();
+
+            mock.Setup(m => m.Get(id)).Returns((Tag)null);
+
+            var controller = new TagController(mock.Object, null, null);
+
+            // Act
+            var result = controller.Edit(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Home", redirectToActionResult.ControllerName);
+            Assert.Equal("SomethingWentWrong", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public void EditActionModelIsComplete()
+        {
+            // Arrange - устанавливает начальные условия для выполнения теста
+            var id = Guid.NewGuid().ToString();
+            var mock = new Mock<ITagService>();
+
+            mock.Setup(m => m.Get(id)).Returns(GetTag());
+
+            var controller = new TagController(mock.Object, null, null);
+
+            // Act
+            var result = controller.Edit(id);
+
+            // Assert - верифицирует результат теста
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<EditTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        private Tag GetTag()
+        {
+            return new Tag { Name = "Разное" };
+        }
+
+        [Fact]
+        public async Task EditPost_ReturnsBadRequestResult_WhenModelStateIsInvalid_EmptyName()
+        {
+            // Arrange
+            var controller = new TagController(null, null, null);
+            controller.ModelState.AddModelError("Name", "Required");
+            var editTagViewModel = new EditTagViewModel();
+
+            // Act
+            var result = await controller.Edit(editTagViewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<EditTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        [Fact]
+        public async Task EditPost_ReturnsBadRequestResult_WhenModelStateIsInvalid_FewWordsInName()
+        {
+            // Arrange
+            var controller = new TagController(null, null, null);
+            controller.ModelState.AddModelError("Name", "TagName");
+
+            var editTagViewModel = new EditTagViewModel() { Name = "Few Words" };
+
+            // Act
+            var result = await controller.Edit(editTagViewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<EditTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        [Fact]
+        public async Task EditPost_ReturnsBadRequestResult_WhenThisNameAlreadyExists()
+        {
+            // Arrange
+            var mock = new Mock<ITagService>();
+            mock.Setup(m => m.GetAll()).Returns(GetTags());
+
+            var controller = new TagController(mock.Object, null, null);
+            controller.ModelState.Clear();
+
+            var editTagViewModel = new EditTagViewModel() { Id = "123", Name = "Разное" };
+
+            // Act
+            var result = await controller.Edit(editTagViewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<EditTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        [Fact]
+        public async Task EditPost_ReturnsRedirectAndAddsTag_WhenModelStateIsValid()
+        {
+            // Arrange
+            var mock = new Mock<ITagService>();
+            mock.Setup(m => m.GetAll()).Returns(GetTags());
+
+            var mockMapper = new Mock<IMapper>();
+
+            var controller = new TagController(mock.Object, null, mockMapper.Object);
+            controller.ModelState.Clear();
+
+            var editTagViewModel = new EditTagViewModel() { Id = "123", Name = "Что-то" };
+
+            // Act
+            var result = await controller.Edit(editTagViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Null(redirectToActionResult.ControllerName);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public void Delete_ReturnsRedirect_WhenTagNotFoundById()
+        {
+            // Arrange
+            var id = Guid.NewGuid().ToString();
+            var mock = new Mock<ITagService>();
+
+            mock.Setup(m => m.Get(id)).Returns((Tag)null);
+
+            var controller = new TagController(mock.Object, null, null);
+
+            // Act
+            var result = controller.Delete(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Home", redirectToActionResult.ControllerName);
+            Assert.Equal("SomethingWentWrong", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public void DeleteActionModelIsComplete()
+        {
+            // Arrange - устанавливает начальные условия для выполнения теста
+            var id = Guid.NewGuid().ToString();
+            var mock = new Mock<ITagService>();
+
+            mock.Setup(m => m.Get(id)).Returns(GetTag());
+
+            var controller = new TagController(mock.Object, null, null);
+
+            // Act
+            var result = controller.Delete(id);
+
+            // Assert - верифицирует результат теста
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsAssignableFrom<DeleteTagViewModel>(viewResult.ViewData.Model);
+        }
+
+        [Fact]
+        public void DeletePost_ReturnsRedirect_WhenTagNotFoundById()
+        {
+            // Arrange
+            var id = Guid.NewGuid().ToString();
+            var mock = new Mock<ITagService>();
+
+            mock.Setup(m => m.Get(id)).Returns((Tag)null);
+
+            var controller = new TagController(mock.Object, null, null);
+
+            // Act
+            var result = controller.Delete(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Home", redirectToActionResult.ControllerName);
+            Assert.Equal("SomethingWentWrong", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public async Task DeletePost_ReturnsRedirectAndDelsTag()
+        {
+            // Arrange
+            var id = Guid.NewGuid().ToString();
+            var mock = new Mock<ITagService>();
+            mock.Setup(m => m.Get(id)).Returns(GetTag()).Verifiable();
+
+            var mockMapper = new Mock<IMapper>();
+
+            var controller = new TagController(mock.Object, null, mockMapper.Object);
+            controller.ModelState.Clear();
+
+            var deleteTagViewModel = new DeleteTagViewModel() { Id = id, Name = "Что-то" };
+
+            // Act
+            var result = await controller.Delete(deleteTagViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Null(redirectToActionResult.ControllerName);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+            mock.Verify();
+        }
     }
 }
