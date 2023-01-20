@@ -17,12 +17,14 @@ namespace BlogWebApp.Controllers
         private readonly ITagService _tagService;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<TagController> _logger;
 
-        public TagController(ITagService tagService, UserManager<User> userManager, IMapper mapper)
+        public TagController(ITagService tagService, UserManager<User> userManager, IMapper mapper, ILogger<TagController> logger)
         {
             _tagService = tagService;
             _mapper = mapper;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -62,7 +64,15 @@ namespace BlogWebApp.Controllers
             }
 
             var model = _mapper.Map<AddTag>(incomingmModel);
-            await _tagService.Add(model);
+            try
+            {
+                await _tagService.Add(model);
+                _logger.LogInformation($"Тег '{model.Name}' добавлен.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при добавлении тега.");
+            }           
             
             return RedirectToAction("Index");
         }

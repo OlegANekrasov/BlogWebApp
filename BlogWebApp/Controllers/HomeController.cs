@@ -27,23 +27,32 @@ namespace BlogWebApp.Controllers
 
         public IActionResult SuccessfullyRegistered()       
         {
+            _logger.LogInformation("Успешная регистрация пользователя.");
             return View();
         }
 
         public IActionResult AccessIsDenied() 
         {
+            _logger.LogError("Доступ запрещен.");
             return View();
         }
 
         [Route("/NotFound")]
         public IActionResult ResourceNotFound()
         {
+            _logger.LogError("Страница не найдена.");
             return View();
         }
 
         public IActionResult SomethingWentWrong(string str)
         {
             ViewBag.Message = str;
+
+            if(!str.Contains("favicon"))
+            {
+                _logger.LogError("Что-то пошло не так : " + str);
+            }
+
             return View();
         }
 
