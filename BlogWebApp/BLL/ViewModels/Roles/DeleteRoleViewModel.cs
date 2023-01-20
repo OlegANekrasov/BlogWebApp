@@ -9,12 +9,12 @@ namespace BlogWebApp.BLL.ViewModels.Roles
 
         [Required]
         [DataType(DataType.Text)]
-        [Display(Name = "Название", Prompt = "Введите название")]
+        [Display(Name = "Название")]
         public string Name { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
-        [Display(Name = "Описание", Prompt = "Введите описание")]
+        [Display(Name = "Описание")]
         public string Description { get; set; }
 
         public DeleteRoleViewModel() { }

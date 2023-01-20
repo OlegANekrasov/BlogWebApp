@@ -7,7 +7,7 @@ namespace BlogWebApp.BLL.ViewModels.Tags
     {
         [Required]
         [DataType(DataType.Text)]
-        [Display(Name = "Название", Prompt = "Введите название")]
+        [Display(Name = "Название")]
         public string Name { get; set; }
 
         public string BlogArticleId { get; set; }
