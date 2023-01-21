@@ -21,7 +21,11 @@ namespace BlogWebApp.BLL.ViewModels.Comments
             Content = name;
             Id = id;
             BlogArticleId = blogArticleId;
-            Image = image;
+            
+            if(image != null && image.Any())
+            { 
+                Image = image;
+            }
         }
     }
 }

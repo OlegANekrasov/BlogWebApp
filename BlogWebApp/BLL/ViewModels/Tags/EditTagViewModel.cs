@@ -12,6 +12,7 @@ namespace BlogWebApp.BLL.ViewModels.Tags
         [TagName(ErrorMessage = "Название тега - одно слово.")]
         public string Name { get; set; }
 
+        public string OldName { get; set; }
         public string Id { get; set; }
 
         public EditTagViewModel() { }
@@ -19,6 +20,7 @@ namespace BlogWebApp.BLL.ViewModels.Tags
         {
             Id= id;
             Name = name;
+            OldName = name;
         }
     }
 }

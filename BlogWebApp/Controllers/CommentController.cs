@@ -17,13 +17,19 @@ namespace BlogWebApp.Controllers
         private readonly ICommentService _commentService;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
+        private readonly ILogger<TagController> _logger;
 
-        public CommentController(IBlogArticleService blogArticleService, ICommentService commentService, UserManager<User> userManager, IMapper mapper)
+        public CommentController(IBlogArticleService blogArticleService, 
+                                 ICommentService commentService, 
+                                 UserManager<User> userManager, 
+                                 IMapper mapper, 
+                                 ILogger<TagController> logger)
         {
             _blogArticleService = blogArticleService;
             _commentService = commentService;
             _userManager = userManager;
             _mapper = mapper;
+            _logger = logger;
         }
         
         public async Task<IActionResult> Index(string id, int? pageNumber)
@@ -47,7 +53,18 @@ namespace BlogWebApp.Controllers
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
             }
 
-            await ((BlogArticleService)_blogArticleService).IncCountOfVisit(id);
+            if (pageNumber == null)
+            {
+                try
+                {
+                    await ((BlogArticleService)_blogArticleService).IncCountOfVisit(id);
+                    _logger.LogInformation($"Пользователь '{currentUser.Email}' просматривает статью '{blogArticle.Title}'.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Ошибка при просмотре статьи '{blogArticle.Title}' пользователем '{currentUser.Email}'.");
+                }
+            }
 
             var pageSize = 5;
             BlogArticleViewModel model = await ((CommentService)_commentService).GetBlogArticleViewModel(id, blogArticle, user, pageNumber, pageSize);
@@ -87,7 +104,18 @@ namespace BlogWebApp.Controllers
                     }
                 }
 
-                await _commentService.Add(model);
+                try
+                {
+                    await _commentService.Add(model);
+                    var user = await _userManager.FindByIdAsync(model.UserId);
+                    var blogArticle = _blogArticleService.Get(model.BlogArticleId);
+                    _logger.LogInformation($"Пользователь '{user.Email}' добавил комментарий к статье '{blogArticle.Title}'.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Ошибка при добавлении комментария.");
+                }
+                
             }
             else
             {
@@ -129,7 +157,18 @@ namespace BlogWebApp.Controllers
                     }
                 }
 
-                await _commentService.Edit(model);
+                try
+                {
+                    await _commentService.Edit(model);
+                    var user = await _userManager.GetUserAsync(User);
+                    var blogArticle = _blogArticleService.Get(incomingmModel.BlogArticleId);
+                    _logger.LogInformation($"Пользователь '{user.Email}' изменил комментарий к статье '{blogArticle.Title}'.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Ошибка при добавлении комментария.");
+                }
+                
             }
             else
             {
@@ -158,8 +197,19 @@ namespace BlogWebApp.Controllers
         public async Task<IActionResult> Delete(DeleteCommentViewModel incomingmModel)
         {
             var model = _mapper.Map<DelComment>(incomingmModel);
-            await _commentService.Delete(model);
-            
+
+            try
+            {
+                await _commentService.Delete(model);
+                var user = await _userManager.GetUserAsync(User);
+                var blogArticle = _blogArticleService.Get(incomingmModel.BlogArticleId);
+                _logger.LogInformation($"Пользователь '{user.Email}' удалил комментарий к статье '{blogArticle.Title}'.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при удалении комментария.");
+            }
+                 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
         }
     }

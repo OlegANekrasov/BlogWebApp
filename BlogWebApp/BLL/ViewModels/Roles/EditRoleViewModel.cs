@@ -14,6 +14,8 @@ namespace BlogWebApp.BLL.ViewModels.Roles
         [Display(Name = "Название", Prompt = "Введите название")]
         public string Name { get; set; }
 
+        public string OldName { get; set; }
+
         [Required]
         [DataType(DataType.Text)]
         [Display(Name = "Описание", Prompt = "Введите описание")]
@@ -24,6 +26,7 @@ namespace BlogWebApp.BLL.ViewModels.Roles
         {
             Id = id;
             Name = name;
+            OldName = name;
             Description = description;
 
             if (Name == "Администратор" || Name == "Модератор" || Name == "Пользователь")

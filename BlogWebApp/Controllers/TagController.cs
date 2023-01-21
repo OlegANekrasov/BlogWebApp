@@ -32,7 +32,8 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+                var errorStr = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             var model = _tagService.GetListTagsViewModel(user); 
@@ -67,7 +68,7 @@ namespace BlogWebApp.Controllers
             try
             {
                 await _tagService.Add(model);
-                _logger.LogInformation($"Тег '{model.Name}' добавлен.");
+                _logger.LogInformation($"Тег '{incomingmModel.Name}' добавлен.");
             }
             catch (Exception ex)
             {
@@ -107,7 +108,16 @@ namespace BlogWebApp.Controllers
             }
 
             var model = _mapper.Map<EditTag>(incomingmModel);
-            await _tagService.Edit(model);
+            try
+            {
+                await _tagService.Edit(model);
+                _logger.LogInformation($"Тег '{incomingmModel.OldName}' изменен на '{incomingmModel.Name}'.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при изменении тега.");
+            }
+            
 
             return RedirectToAction("Index");
         }
@@ -137,7 +147,15 @@ namespace BlogWebApp.Controllers
             }
 
             var model = _mapper.Map<DelTag>(incomingmModel);
-            await _tagService.Delete(model);
+            try
+            {
+                await _tagService.Delete(model);
+                _logger.LogInformation($"Тег '{incomingmModel.Name}' удален.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при удалении тега.");
+            }
 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
         }

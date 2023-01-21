@@ -18,12 +18,17 @@ namespace BlogWebApp.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IUserService _userService;
+        private readonly ILogger<TagController> _logger;
 
-         public SettingsController(UserManager<User> userManager, RoleManager<ApplicationRole> roleManager, IUserService userService)
+        public SettingsController(UserManager<User> userManager, 
+                                  RoleManager<ApplicationRole> roleManager, 
+                                  IUserService userService, 
+                                  ILogger<TagController> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -82,8 +87,13 @@ namespace BlogWebApp.Controllers
             if (user != null)
             {
                 var result = await _userManager.DeleteAsync(user);
-                if (!result.Succeeded)
+                if (result.Succeeded)
                 {
+                    _logger.LogInformation($"Пользователь '{model.Email}' удален.");
+                }
+                else
+                {
+                    _logger.LogError($"Ошибка удаления пользователя с ID '{userId}'.");
                     return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка удаления пользователя с ID '{userId}'." });
                 }
             }
@@ -99,21 +109,28 @@ namespace BlogWebApp.Controllers
         public async Task<IActionResult> SaveRole(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            var userRoles = await _userManager.GetRolesAsync(user);
-            if (user != null && userRoles.Any())
-            {
-                var roles = _roleManager.Roles;
-
-                var allRoles = new List<string>();
-                foreach (var role in roles)
+            if (user != null)
+            { 
+                var userRoles = await _userManager.GetRolesAsync(user);
+                if (userRoles.Any())
                 {
-                    allRoles.Add(role.Name);
+                    var roles = _roleManager.Roles;
+
+                    var allRoles = new List<string>();
+                    foreach (var role in roles)
+                    {
+                        allRoles.Add(role.Name);
+                    }
+
+                    var useName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
+                    var model = new ChangeUserRoleViewModel(id, useName, user.Email, userRoles, allRoles);
+
+                    return View("SaveRole", model);
                 }
-
-                var useName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
-                var model = new ChangeUserRoleViewModel(id, useName, user.Email, userRoles, allRoles);
-
-                return View("SaveRole", model);
+                else
+                {
+                    return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось определить роли пользователя с ID '{id}'." });
+                }
             }
             else
             {
@@ -131,14 +148,32 @@ namespace BlogWebApp.Controllers
                 var userRoles = await _userManager.GetRolesAsync(user);
                 if (userRoles.Any())
                 {
-                    await _userManager.RemoveFromRolesAsync(user, userRoles);
+                    var result = await _userManager.RemoveFromRolesAsync(user, userRoles);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation($"Роли пользователя '{user.Email}' удалены.");
+                    }
+                    else
+                    {
+                        _logger.LogError($"Ошибка при удалении ролей пользователя '{user.Email}'.");
+                        return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка при удалении ролей пользователя '{user.Email}'." });
+                    }
                 }
 
                 foreach (var item in model.Roles)
                 {
                     if(item.IsRoleAssigned)
                     {
-                        await _userManager.AddToRoleAsync(user, item.Name);
+                        var result = await _userManager.AddToRoleAsync(user, item.Name);
+                        if (result.Succeeded)
+                        {
+                            _logger.LogInformation($"Роль '{item.Name}' добавлена пользователю '{user.Email}'.");
+                        }
+                        else
+                        {
+                            _logger.LogError($"Ошибка при добавлении роли '{item.Name}' пользователю '{user.Email}'.");
+                            return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка при добавлении роли '{item.Name}' пользователю '{user.Email}'." });
+                        }
                     }
                 }
             }

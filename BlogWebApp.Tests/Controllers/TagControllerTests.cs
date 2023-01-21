@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogWebApp.BLL.Models;
 using BlogWebApp.BLL.Services;
 using BlogWebApp.BLL.ViewModels.Tags;
 using BlogWebApp.Controllers;
@@ -37,7 +38,7 @@ namespace BlogWebApp.Tests.Controllers
             var fakeUserManager = new Mock<FakeUserManager>();
             fakeUserManager.Setup(m => m.GetUserAsync(contextUser).Result).Returns(user);
             
-            var controller = new TagController(mock.Object, fakeUserManager.Object, null);
+            var controller = new TagController(mock.Object, fakeUserManager.Object, null, null);
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = contextUser }
@@ -78,7 +79,7 @@ namespace BlogWebApp.Tests.Controllers
         public void CreateActionModelIsComplete()
         {
             // Arrange - устанавливает начальные условия для выполнения теста
-            var controller = new TagController(null, null, null);
+            var controller = new TagController(null, null, null, null);
 
             // Act - выполняет тест (обычно представляет одну строку кода)
             var result = controller.Create();
@@ -92,7 +93,7 @@ namespace BlogWebApp.Tests.Controllers
         public async Task CreatePost_ReturnsBadRequestResult_WhenModelStateIsInvalid_EmptyName()
         {
             // Arrange
-            var controller = new TagController(null, null, null);
+            var controller = new TagController(null, null, null, null);
             controller.ModelState.AddModelError("Name", "Required");
             var createTagViewModel = new CreateTagViewModel();
 
@@ -108,7 +109,7 @@ namespace BlogWebApp.Tests.Controllers
         public async Task CreatePost_ReturnsBadRequestResult_WhenModelStateIsInvalid_FewWordsInName()
         {
             // Arrange
-            var controller = new TagController(null, null, null);
+            var controller = new TagController(null, null, null, null);
             controller.ModelState.AddModelError("Name", "TagName");
             
             var createTagViewModel = new CreateTagViewModel() { Name = "Few Words" };
@@ -128,7 +129,7 @@ namespace BlogWebApp.Tests.Controllers
             var mock = new Mock<ITagService>();
             mock.Setup(m => m.GetAll()).Returns(GetTags());
 
-            var controller = new TagController(mock.Object, null, null);
+            var controller = new TagController(mock.Object, null, null, null);
             controller.ModelState.Clear();
 
             var createTagViewModel = new CreateTagViewModel() { Name = "Разное" };
@@ -152,10 +153,12 @@ namespace BlogWebApp.Tests.Controllers
             // Arrange
             var mock = new Mock<ITagService>();
             mock.Setup(m => m.GetAll()).Returns(GetTags());
+            mock.Setup(m => m.Add(new AddTag())).Returns(Task.CompletedTask);
 
-            var mockMapper = new Mock<IMapper>(); 
+            var mockMapper = new Mock<IMapper>();
+            var mockLoger = new Mock<ILogger<TagController>>();
 
-            var controller = new TagController(mock.Object, null, mockMapper.Object);
+            var controller = new TagController(mock.Object, null, mockMapper.Object, mockLoger.Object);
             controller.ModelState.Clear();
 
             var createTagViewModel = new CreateTagViewModel() { Name = "Что-то" };
@@ -178,7 +181,7 @@ namespace BlogWebApp.Tests.Controllers
 
             mock.Setup(m => m.Get(id)).Returns((Tag)null);
 
-            var controller = new TagController(mock.Object, null, null);
+            var controller = new TagController(mock.Object, null, null, null);
 
             // Act
             var result = controller.Edit(id);
@@ -198,7 +201,7 @@ namespace BlogWebApp.Tests.Controllers
 
             mock.Setup(m => m.Get(id)).Returns(GetTag());
 
-            var controller = new TagController(mock.Object, null, null);
+            var controller = new TagController(mock.Object, null, null, null);
 
             // Act
             var result = controller.Edit(id);
@@ -217,7 +220,7 @@ namespace BlogWebApp.Tests.Controllers
         public async Task EditPost_ReturnsBadRequestResult_WhenModelStateIsInvalid_EmptyName()
         {
             // Arrange
-            var controller = new TagController(null, null, null);
+            var controller = new TagController(null, null, null, null);
             controller.ModelState.AddModelError("Name", "Required");
             var editTagViewModel = new EditTagViewModel();
 
@@ -233,7 +236,7 @@ namespace BlogWebApp.Tests.Controllers
         public async Task EditPost_ReturnsBadRequestResult_WhenModelStateIsInvalid_FewWordsInName()
         {
             // Arrange
-            var controller = new TagController(null, null, null);
+            var controller = new TagController(null, null, null, null);
             controller.ModelState.AddModelError("Name", "TagName");
 
             var editTagViewModel = new EditTagViewModel() { Name = "Few Words" };
@@ -253,7 +256,7 @@ namespace BlogWebApp.Tests.Controllers
             var mock = new Mock<ITagService>();
             mock.Setup(m => m.GetAll()).Returns(GetTags());
 
-            var controller = new TagController(mock.Object, null, null);
+            var controller = new TagController(mock.Object, null, null, null);
             controller.ModelState.Clear();
 
             var editTagViewModel = new EditTagViewModel() { Id = "123", Name = "Разное" };
@@ -274,8 +277,9 @@ namespace BlogWebApp.Tests.Controllers
             mock.Setup(m => m.GetAll()).Returns(GetTags());
 
             var mockMapper = new Mock<IMapper>();
+            var mockLoger = new Mock<ILogger<TagController>>();
 
-            var controller = new TagController(mock.Object, null, mockMapper.Object);
+            var controller = new TagController(mock.Object, null, mockMapper.Object, mockLoger.Object);
             controller.ModelState.Clear();
 
             var editTagViewModel = new EditTagViewModel() { Id = "123", Name = "Что-то" };
@@ -298,7 +302,7 @@ namespace BlogWebApp.Tests.Controllers
 
             mock.Setup(m => m.Get(id)).Returns((Tag)null);
 
-            var controller = new TagController(mock.Object, null, null);
+            var controller = new TagController(mock.Object, null, null, null);
 
             // Act
             var result = controller.Delete(id);
@@ -318,7 +322,7 @@ namespace BlogWebApp.Tests.Controllers
 
             mock.Setup(m => m.Get(id)).Returns(GetTag());
 
-            var controller = new TagController(mock.Object, null, null);
+            var controller = new TagController(mock.Object, null, null, null);
 
             // Act
             var result = controller.Delete(id);
@@ -337,7 +341,7 @@ namespace BlogWebApp.Tests.Controllers
 
             mock.Setup(m => m.Get(id)).Returns((Tag)null);
 
-            var controller = new TagController(mock.Object, null, null);
+            var controller = new TagController(mock.Object, null, null, null);
 
             // Act
             var result = controller.Delete(id);
@@ -357,8 +361,9 @@ namespace BlogWebApp.Tests.Controllers
             mock.Setup(m => m.Get(id)).Returns(GetTag()).Verifiable();
 
             var mockMapper = new Mock<IMapper>();
+            var mockLoger = new Mock<ILogger<TagController>>();
 
-            var controller = new TagController(mock.Object, null, mockMapper.Object);
+            var controller = new TagController(mock.Object, null, mockMapper.Object, mockLoger.Object);
             controller.ModelState.Clear();
 
             var deleteTagViewModel = new DeleteTagViewModel() { Id = id, Name = "Что-то" };

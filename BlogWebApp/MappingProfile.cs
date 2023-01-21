@@ -28,7 +28,6 @@ namespace BlogWebApp
             CreateMap<BlogArticle, DeleteBlogArticleViewModel>().ForMember(x => x.UserName, opt => opt.MapFrom(c => c.User.Email))
                                                                 .ForMember(x => x.DateCreation, opt => opt.MapFrom(c => c.DateCreation.ToString("dd.MM.yyyy")));
             
-
             CreateMap<CreateTagViewModel, AddTag>();
             CreateMap<DeleteTagViewModel, DelTag>();
             CreateMap<EditTagViewModel, EditTag>();

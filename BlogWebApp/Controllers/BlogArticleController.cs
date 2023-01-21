@@ -19,13 +19,19 @@ namespace BlogWebApp.Controllers
         private readonly IBlogArticleService _blogArticleService;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
+        private readonly ILogger<TagController> _logger;
 
-        public BlogArticleController(UserManager<User> userManager, IBlogArticleService blogArticleService, IMapper mapper, ITagService tagService)
+        public BlogArticleController(UserManager<User> userManager, 
+                                     IBlogArticleService blogArticleService, 
+                                     IMapper mapper, 
+                                     ITagService tagService, 
+                                     ILogger<TagController> logger)
         {
             _userManager = userManager;
             _blogArticleService = blogArticleService;
             _mapper = mapper;
             _tagService = tagService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index(int? pageNumber, string sortOrder, string currentFilter, string searchString, string currentFilter1, string searchString1)
@@ -33,7 +39,8 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+                var errorStr = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             var all_blogArticles = ((BlogArticleService)_blogArticleService).GetAllIncludeTags();
@@ -83,7 +90,8 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+                var errorStr = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             var tags = ((TagService)_tagService).GetAll().OrderBy(o => o.Name).ToList();
@@ -99,14 +107,23 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
+                var errorStr = $"Не удалось загрузить пользователя с ID '{userId}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
             else
             {
                 var model = _mapper.Map<AddBlogArticle>(incomingmModel);
                 model.Tags = incomingmModel.Tags.Where(o => o.IsTagSelected).Select(o => o.Name).ToList();
-                
-                await _blogArticleService.Add(model, user);
+
+                try
+                {
+                    await _blogArticleService.Add(model, user);
+                    _logger.LogInformation($"Статья '{incomingmModel.Title}' добавлена.");
+                }
+                catch (Exception ex) 
+                {
+                    _logger.LogError(ex, "Ошибка при добавлении статьи.");
+                }               
             }
 
             return RedirectToAction("Index");
@@ -118,13 +135,15 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+                var errorStr = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена статья с ID '{id}'." });
+                var errorStr = $"Не найдена статья с ID '{id}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             if(user != blogArticle.User && !User.IsInRole("Администратор") && !User.IsInRole("Модератор"))
@@ -147,7 +166,15 @@ namespace BlogWebApp.Controllers
             var model = _mapper.Map<EditBlogArticle>(incomingmModel);
             model.SetTags(incomingmModel.Tags.Where(o => o.IsTagSelected).ToList());
 
-            await _blogArticleService.Edit(model);
+            try
+            {
+                await _blogArticleService.Edit(model);
+                _logger.LogInformation($"Статья '{incomingmModel.Title}' изменена.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при изменении статьи.");
+            }            
 
             return RedirectToAction("Index");
         }
@@ -158,13 +185,15 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+                var errorStr = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена статья с ID '{id}'." });
+                var errorStr = $"Не найдена статья с ID '{id}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             if (user != blogArticle.User && !User.IsInRole("Администратор") && !User.IsInRole("Модератор"))
@@ -185,11 +214,20 @@ namespace BlogWebApp.Controllers
             var blogArticle = _blogArticleService.Get(id);
             if (blogArticle == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена статья с ID '{id}'." });
+                var errorStr = $"Не найдена статья с ID '{id}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
             }
 
             var model = _mapper.Map<DelBlogArticle>(incomingmModel);
-            await _blogArticleService.Delete(model);
+            try
+            {
+                await _blogArticleService.Delete(model);
+                _logger.LogInformation($"Статья '{incomingmModel.Title}' удалена.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при удалении статьи.");
+            }            
 
             return RedirectToAction("Index");
         }
