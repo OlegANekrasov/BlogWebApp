@@ -14,6 +14,7 @@ using static System.Net.Mime.MediaTypeNames;
 using NLog;
 using NLog.Web;
 using Microsoft.CodeAnalysis.Differencing;
+using BlogWebApp.BLL.Services.Interfaces;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -90,6 +91,7 @@ try
     builder.Services.AddScoped<ITagService, TagService>();
     builder.Services.AddScoped<ICommentService, CommentService>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IRoleService, RoleService>();
 
     var app = builder.Build();
 

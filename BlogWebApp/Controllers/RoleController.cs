@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogWebApp.BLL.Services.Interfaces;
 using BlogWebApp.BLL.ViewModels.Roles;
 using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Models;
@@ -15,18 +16,18 @@ namespace BlogWebApp.Controllers
     {
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IMapper _mapper;
-        private readonly ILogger<TagController> _logger;
+        private readonly IRoleService _roleService;
 
-        public RoleController(RoleManager<ApplicationRole> roleManager, IMapper mapper, ILogger<TagController> logger)
+        public RoleController(RoleManager<ApplicationRole> roleManager, IMapper mapper, IRoleService roleService)
         {
             _roleManager = roleManager;
             _mapper = mapper;
-            _logger = logger;
+            _roleService = roleService;
         }
 
         public IActionResult Index()
         {
-            var roles = _roleManager.Roles.ToList<ApplicationRole>();
+            var roles = _roleService.GetAll(); 
             var model = new RoleListViewModel(roles);
 
             return View(model);
@@ -43,17 +44,12 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateRoleViewModel model)
         {
-            var role = _roleManager.Roles.ToList().FirstOrDefault(o => o.Name.ToUpper().Equals(model.Name.ToUpper()));
+            var role = _roleService.GetAll().FirstOrDefault(o => o.Name.ToUpper().Equals(model.Name.ToUpper()));
             if (role == null) 
             {
-                var result = await _roleManager.CreateAsync(new ApplicationRole(model.Name, model.Description));
-                if (result.Succeeded)
+                if(!await _roleService.AddAsync(model))
                 {
-                    _logger.LogInformation($"Роль '{model.Name}' добавлена.");
-                }   
-                else
-                {
-                    _logger.LogError("Ошибка при добавлении роли.");
+                    return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при добавлении роли." });
                 }
             }
             else
@@ -68,7 +64,7 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public IActionResult Edit(string id)
         {
-            var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
+            var role = _roleService.Get(id);
             if (role == null)
             {
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
@@ -82,23 +78,21 @@ namespace BlogWebApp.Controllers
         public async Task<IActionResult> Edit(EditRoleViewModel model)
         {
             var id = model.Id;
-            var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
+            var role = _roleService.Get(id);
             if (role == null)
             {
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
             }
 
-            role.Name = model.Name;
-            role.Description= model.Description;
-
-            var result = await _roleManager.UpdateAsync(role);
-            if (result.Succeeded)
+            var tags = _roleService.GetAll();
+            if (tags.FirstOrDefault(o => o.Name.ToUpper() == model.Name.ToUpper() && o.Id != model.Id) != null)
             {
-                _logger.LogInformation($"Роль '{model.OldName}' изменена на '{model.Name}'.");
+                ModelState.AddModelError(string.Empty, "Такая роль уже есть.");
+                return View(model);
             }
-            else
+
+            if (!await _roleService.EditAsync(role, model))
             {
-                _logger.LogError($"Ошибка при изменении роли с ID '{id}'.");
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка при изменении роли с ID '{id}'." });
             }
 
@@ -108,7 +102,7 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public IActionResult Delete(string id)
         {
-            var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
+            var role = _roleService.Get(id);
             if (role == null)
             {
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
@@ -122,20 +116,14 @@ namespace BlogWebApp.Controllers
         public async Task<IActionResult> Delete(DeleteRoleViewModel model)
         {
             var id = model.Id;
-            var role = _roleManager.Roles.FirstOrDefault(o => o.Id == id);
+            var role = _roleService.Get(id);
             if (role == null)
             {
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдена роль с ID '{id}'." });
             }
 
-            var result = await _roleManager.DeleteAsync(role);
-            if (result.Succeeded)
+            if (!await _roleService.DeleteAsync(role, model))
             {
-                _logger.LogInformation($"Роль '{model.Name}' удалена.");
-            }
-            else
-            {
-                _logger.LogError($"Ошибка при удалении роли с ID '{id}'.");
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка при удалении роли с ID '{id}'." });
             }
 
