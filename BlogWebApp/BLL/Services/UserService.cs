@@ -44,7 +44,54 @@ namespace BlogWebApp.BLL.Services
             return user;
         }
 
-        public async Task<UserViewModel> GetUserViewModel(User user)
+        public async Task<bool> EditUserRolesAsync(ChangeUserRoleViewModel model)
+        {
+            var userId = model.Id;
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                if (userRoles.Any())
+                {
+                    var result = await _userManager.RemoveFromRolesAsync(user, userRoles);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation($"Роли пользователя '{user.Email}' удалены.");
+                    }
+                    else
+                    {
+                        _logger.LogError($"Ошибка при удалении ролей пользователя '{user.Email}'.");
+                        return false;
+                    }
+                }
+
+                foreach (var item in model.Roles)
+                {
+                    if (item.IsRoleAssigned)
+                    {
+                        var result = await _userManager.AddToRoleAsync(user, item.Name);
+                        if (result.Succeeded)
+                        {
+                            _logger.LogInformation($"Роль '{item.Name}' добавлена пользователю '{user.Email}'.");
+                        }
+                        else
+                        {
+                            _logger.LogError($"Ошибка при добавлении роли '{item.Name}' пользователю '{user.Email}'.");
+                            return false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                _logger.LogError($"Не найден пользователь с ID '{userId}'.");
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<UserViewModel> GetUserViewModelAsync(User user)
         {
             var model = _mapper.Map<UserViewModel>(user);
 
@@ -66,7 +113,7 @@ namespace BlogWebApp.BLL.Services
             return model;
         }
 
-        public async Task<List<UserListModel>> CreateUserListModel()
+        public async Task<List<UserListModel>> CreateUserListModelAsync()
         {
             var users = _userManager.Users;
             var userList = new List<UserListModel>();

@@ -20,19 +20,16 @@ namespace BlogWebApp.Controllers
         private readonly IBlogArticleService _blogArticleService;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
-        private readonly ILogger<TagController> _logger;
 
         public BlogArticleController(UserManager<User> userManager, 
                                      IBlogArticleService blogArticleService, 
                                      IMapper mapper, 
-                                     ITagService tagService, 
-                                     ILogger<TagController> logger)
+                                     ITagService tagService)
         {
             _userManager = userManager;
             _blogArticleService = blogArticleService;
             _mapper = mapper;
             _tagService = tagService;
-            _logger = logger;
         }
 
         public async Task<IActionResult> Index(int? pageNumber, string sortOrder, string currentFilter, string searchString, string currentFilter1, string searchString1)
@@ -108,23 +105,17 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                var errorStr = $"Не удалось загрузить пользователя с ID '{userId}'.";
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
             }
             else
             {
                 var model = _mapper.Map<AddBlogArticle>(incomingmModel);
                 model.Tags = incomingmModel.Tags.Where(o => o.IsTagSelected).Select(o => o.Name).ToList();
 
-                try
+                if(!await _blogArticleService.AddAsync(model, user))
                 {
-                    await _blogArticleService.Add(model, user);
-                    _logger.LogInformation($"Статья '{incomingmModel.Title}' добавлена.");
+                    return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при добавлении статьи." });
                 }
-                catch (Exception ex) 
-                {
-                    _logger.LogError(ex, "Ошибка при добавлении статьи.");
-                }               
             }
 
             return RedirectToAction("Index");
@@ -167,15 +158,10 @@ namespace BlogWebApp.Controllers
             var model = _mapper.Map<EditBlogArticle>(incomingmModel);
             model.SetTags(incomingmModel.Tags.Where(o => o.IsTagSelected).ToList());
 
-            try
+            if(!await _blogArticleService.EditAsync(model))
             {
-                await _blogArticleService.Edit(model);
-                _logger.LogInformation($"Статья '{incomingmModel.Title}' изменена.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при изменении статьи." });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ошибка при изменении статьи.");
-            }            
 
             return RedirectToAction("Index");
         }
@@ -220,15 +206,10 @@ namespace BlogWebApp.Controllers
             }
 
             var model = _mapper.Map<DelBlogArticle>(incomingmModel);
-            try
+            if(!await _blogArticleService.DeleteAsync(model))
             {
-                await _blogArticleService.Delete(model);
-                _logger.LogInformation($"Статья '{incomingmModel.Title}' удалена.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при удалении статьи." });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ошибка при удалении статьи.");
-            }            
 
             return RedirectToAction("Index");
         }

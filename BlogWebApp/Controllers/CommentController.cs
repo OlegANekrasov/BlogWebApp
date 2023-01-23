@@ -56,14 +56,10 @@ namespace BlogWebApp.Controllers
 
             if (pageNumber == null)
             {
-                try
+                if(!await ((BlogArticleService)_blogArticleService).IncCountOfVisitAsync(id, currentUser.Email))
                 {
-                    await ((BlogArticleService)_blogArticleService).IncCountOfVisit(id);
-                    _logger.LogInformation($"Пользователь '{currentUser.Email}' просматривает статью '{blogArticle.Title}'.");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"Ошибка при просмотре статьи '{blogArticle.Title}' пользователем '{currentUser.Email}'.");
+                    return RedirectToAction("SomethingWentWrong", "Home", 
+                            new { str = $"Ошибка при просмотре статьи '{blogArticle.Title}' пользователем '{currentUser.Email}'." });
                 }
             }
 

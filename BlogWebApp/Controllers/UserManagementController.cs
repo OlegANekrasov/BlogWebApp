@@ -228,7 +228,7 @@ namespace BlogWebApp.Controllers
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
             }
 
-            var model = await _userService.GetUserViewModel(user);
+            var model = await _userService.GetUserViewModelAsync(user);
             return View("UserView", model);
         }
 

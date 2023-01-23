@@ -20,7 +20,7 @@ namespace BlogWebApp.DAL.Repository
             _blogArticlesRepository = blogArticlesRepository;
         }
 
-        public async Task Add(AddComment model)
+        public async Task AddAsync(AddComment model)
         {
             var item = new Comment()
             {
@@ -33,12 +33,12 @@ namespace BlogWebApp.DAL.Repository
                 User = await userManager.FindByIdAsync(model.UserId)
             };
 
-            await Create(item);
+            await CreateAsync(item);
         }
 
-        public async Task Edit(EditComment model)
+        public async Task EditAsync(EditComment model)
         {
-            var comment = await Get(model.Id);
+            var comment = await GetAsync(model.Id);
             if (comment != null)
             {
                 var edit = false;
@@ -57,17 +57,17 @@ namespace BlogWebApp.DAL.Repository
 
                 if (edit)
                 {
-                    await Update(comment);
+                    await UpdateAsync(comment);
                 }
             }
         }
 
-        public async Task Delete(DelComment model)
+        public async Task DeleteAsync(DelComment model)
         {
-            var comment = await Get(model.Id);
+            var comment = await GetAsync(model.Id);
             if (comment != null)
             {
-                await Delete(comment);
+                await DeleteAsync(comment);
             }
         }
 

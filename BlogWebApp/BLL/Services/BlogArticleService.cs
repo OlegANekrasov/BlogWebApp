@@ -1,6 +1,7 @@
 ﻿using BlogWebApp.BLL.Models;
 using BlogWebApp.BLL.Services.Interfaces;
 using BlogWebApp.BLL.ViewModels.BlogArticles;
+using BlogWebApp.Controllers;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
@@ -14,26 +15,61 @@ namespace BlogWebApp.BLL.Services
     {
         private readonly IRepository<BlogArticle> _blogArticlesRepository;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<TagController> _logger;
 
-        public BlogArticleService(UserManager<User> userManager, IRepository<BlogArticle> blogArticlesRepository) 
+        public BlogArticleService(UserManager<User> userManager, IRepository<BlogArticle> blogArticlesRepository, ILogger<TagController> logger) 
         {
             _userManager = userManager;
             _blogArticlesRepository = blogArticlesRepository;
+            _logger = logger;
         }
 
-        public async Task Add(AddBlogArticle model, User user)
+        public async Task<bool> AddAsync(AddBlogArticle model, User user)
         {
-            await ((BlogArticlesRepository)_blogArticlesRepository).Add(model, user);
+            try
+            {
+                await ((BlogArticlesRepository)_blogArticlesRepository).Add(model, user);
+                
+                _logger.LogInformation($"Статья '{model.Title}' добавлена.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при добавлении статьи.");
+                return false;
+            }
         }
 
-        public async Task Delete(DelBlogArticle model)
+        public async Task<bool> DeleteAsync(DelBlogArticle model)
         {
-            await((BlogArticlesRepository)_blogArticlesRepository).Delete(model);
+            try
+            {
+                await ((BlogArticlesRepository)_blogArticlesRepository).Delete(model);
+                
+                _logger.LogInformation($"Статья '{model.Title}' удалена.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при удалении статьи.");
+                return false;
+            }
         }
 
-        public async Task Edit(EditBlogArticle model)
+        public async Task<bool> EditAsync(EditBlogArticle model)
         {
-            await ((BlogArticlesRepository)_blogArticlesRepository).Edit(model);
+            try
+            {
+                await ((BlogArticlesRepository)_blogArticlesRepository).Edit(model);
+                
+                _logger.LogInformation($"Статья '{model.Title}' изменена.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при изменении статьи.");
+                return false;
+            }           
         }
 
         public BlogArticle Get(string id)
@@ -88,7 +124,7 @@ namespace BlogWebApp.BLL.Services
             return tagStr;
         }
 
-        public async Task IncCountOfVisit(string id)
+        public async Task<bool> IncCountOfVisitAsync(string id, string Email)
         {
             var blogArticle = ((BlogArticlesRepository)_blogArticlesRepository).GetById(id);
 
@@ -97,8 +133,20 @@ namespace BlogWebApp.BLL.Services
                 var countOfVisit = blogArticle.CountOfVisit ?? 0;
                 blogArticle.CountOfVisit = ++countOfVisit;
 
-                await ((BlogArticlesRepository)_blogArticlesRepository).IncCountOfVisit(blogArticle);
+                try
+                {
+                    await ((BlogArticlesRepository)_blogArticlesRepository).IncCountOfVisit(blogArticle);
+                    
+                    _logger.LogInformation($"Пользователь '{Email}' просматривает статью '{blogArticle.Title}'.");
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Ошибка при просмотре статьи '{blogArticle.Title}' пользователем '{Email}'.");
+                    return false;
+                }               
             }
+            return false;
         }
 
         public IEnumerable<BlogArticle> SortOrder(IEnumerable<BlogArticle> blogArticle, string sortOrder)

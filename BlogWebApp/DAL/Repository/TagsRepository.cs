@@ -23,7 +23,7 @@ namespace BlogWebApp.DAL.Repository
                     Name = model.Name
                 };
 
-                await Create(item);
+                await CreateAsync(item);
 
                 return item;
             }
@@ -33,7 +33,7 @@ namespace BlogWebApp.DAL.Repository
 
         public async Task Edit(EditTag model)
         {
-            var tag = await Get(model.Id);
+            var tag = await GetAsync(model.Id);
             if (tag != null)
             {
                 var edit = false;
@@ -46,7 +46,7 @@ namespace BlogWebApp.DAL.Repository
 
                 if (edit)
                 {
-                    await Update(tag);
+                    await UpdateAsync(tag);
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace BlogWebApp.DAL.Repository
             var tag = GetById(model.Id);
             if (tag != null)
             {
-                await Delete(tag);
+                await DeleteAsync(tag);
             }
         }
 

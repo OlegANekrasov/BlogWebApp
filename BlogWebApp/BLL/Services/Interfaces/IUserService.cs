@@ -6,9 +6,10 @@ namespace BlogWebApp.BLL.Services.Interfaces
     public interface IUserService
     {
         Task<User> FindByIdAsync(string id);
+        Task<bool> EditUserRolesAsync(ChangeUserRoleViewModel model);
         Task<bool> DeleteAsync(User user, UserDeleteViewModel model);
-        Task<UserViewModel> GetUserViewModel(User user);
+        Task<UserViewModel> GetUserViewModelAsync(User user);
         Task<ChangeUserRoleViewModel> CreateChangeUserRoleViewModelAsync(User user, string id);
-        Task<List<UserListModel>> CreateUserListModel();
+        Task<List<UserListModel>> CreateUserListModelAsync();
     }
 }

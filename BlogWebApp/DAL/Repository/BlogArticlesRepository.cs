@@ -30,7 +30,7 @@ namespace BlogWebApp.DAL.Repository
                     User = user
                 };
 
-                await Create(item);
+                await CreateAsync(item);
                 await AddTags(model.Tags, item);
             }
         }
@@ -77,7 +77,7 @@ namespace BlogWebApp.DAL.Repository
                 if (edit)
                 {
                     blogArticle.DateChange = DateTime.Now;
-                    await Update(blogArticle);
+                    await UpdateAsync(blogArticle);
                 }
             }
         }
@@ -102,9 +102,9 @@ namespace BlogWebApp.DAL.Repository
                 tagItem.BlogArticles.Add(item);
 
                 if (tagItemNew)
-                    await _tagsRepository.Create(tagItem);
+                    await _tagsRepository.CreateAsync(tagItem);
                 else
-                    await _tagsRepository.Update(tagItem);
+                    await _tagsRepository.UpdateAsync(tagItem);
             }
         }
 
@@ -120,7 +120,7 @@ namespace BlogWebApp.DAL.Repository
 
                     if(tagItem.BlogArticles.Count() == 1)
                     {
-                        await _tagsRepository.Delete(tagItem);
+                        await _tagsRepository.DeleteAsync(tagItem);
                     }
 
                     update = true;
@@ -129,7 +129,7 @@ namespace BlogWebApp.DAL.Repository
 
             if(update)
             {
-                await Update(item);
+                await UpdateAsync(item);
             }
         }
 
@@ -141,7 +141,7 @@ namespace BlogWebApp.DAL.Repository
                 List<string> listTags = blogArticle.Tags.Select(o => o.Name).ToList();
                 
                 await DelTags(listTags, blogArticle);
-                await Delete(blogArticle);
+                await DeleteAsync(blogArticle);
             }
         }
 
@@ -149,7 +149,7 @@ namespace BlogWebApp.DAL.Repository
         {
             if (blogArticle != null)
             {
-                await Update(blogArticle);
+                await UpdateAsync(blogArticle);
             }
         }
 

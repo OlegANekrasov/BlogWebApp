@@ -26,17 +26,17 @@ namespace BlogWebApp.BLL.Services
         
         public async Task Add(AddComment model)
         {
-            await ((CommentsRepository)_commentsRepository).Add(model);
+            await ((CommentsRepository)_commentsRepository).AddAsync(model);
         }
 
         public async Task Delete(DelComment model)
         {
-            await((CommentsRepository)_commentsRepository).Delete(model);
+            await((CommentsRepository)_commentsRepository).DeleteAsync(model);
         }
 
         public async Task Edit(EditComment model)
         {
-            await ((CommentsRepository)_commentsRepository).Edit(model);
+            await ((CommentsRepository)_commentsRepository).EditAsync(model);
         }
 
         public Comment Get(string id)

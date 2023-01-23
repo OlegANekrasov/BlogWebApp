@@ -19,19 +19,19 @@ namespace BlogWebApp.DAL.Repository
             Set = set;
         }
 
-        public async Task Create(T item)
+        public async Task CreateAsync(T item)
         {
             Set.Add(item);
             await _db.SaveChangesAsync();
         }
 
-        public async Task Delete(T item)
+        public async Task DeleteAsync(T item)
         {
             Set.Remove(item);
             await _db.SaveChangesAsync();
         }
 
-        public async Task<T> Get(string id)
+        public async Task<T> GetAsync(string id)
         {
             return await Set.FindAsync(id);
         }
@@ -41,7 +41,7 @@ namespace BlogWebApp.DAL.Repository
             return Set;
         }
 
-        public async Task Update(T item)
+        public async Task UpdateAsync(T item)
         {
             Set.Update(item);
             await _db.SaveChangesAsync();

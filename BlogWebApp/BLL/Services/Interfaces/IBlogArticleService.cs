@@ -7,8 +7,8 @@ namespace BlogWebApp.BLL.Services.Interfaces
     {
         IEnumerable<BlogArticle> GetAll();
         BlogArticle Get(string id);
-        Task Add(AddBlogArticle model, User user);
-        Task Edit(EditBlogArticle model);
-        Task Delete(DelBlogArticle model);
+        Task<bool> AddAsync(AddBlogArticle model, User user);
+        Task<bool> EditAsync(EditBlogArticle model);
+        Task<bool> DeleteAsync(DelBlogArticle model);
     }
 }
