@@ -8,9 +8,9 @@ namespace BlogWebApp.BLL.Services.Interfaces
     {
         IEnumerable<Tag> GetAll();
         Tag Get(string id);
-        Task Add(AddTag model);
-        Task Edit(EditTag model);
-        Task Delete(DelTag model);
+        Task<bool> AddAsync(AddTag model);
+        Task<bool> EditAsync(EditTag model);
+        Task<bool> DeleteAsync(DelTag model);
 
         ListTagsViewModel GetListTagsViewModel();
         ListTagsViewModel GetListTagsViewModel(User user);

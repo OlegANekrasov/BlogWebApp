@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogWebApp.BLL.Services;
 using BlogWebApp.BLL.Services.Interfaces;
 using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.Users;
@@ -21,7 +22,6 @@ namespace BlogWebApp.Controllers
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UserManagementController> _logger;
         private readonly IUserService _userService;
         private readonly SignInManager<User> _signInManager;
@@ -32,14 +32,12 @@ namespace BlogWebApp.Controllers
 
         public UserManagementController(UserManager<User> userManager, 
                                         IMapper mapper, 
-                                        IUnitOfWork unitOfWork, 
                                         ILogger<UserManagementController> logger,
                                         IUserService userService,
                                         SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
             _logger = logger;
             _userService = userService;
             _signInManager = signInManager;
@@ -48,19 +46,19 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> PersonalDataView(string id = null)
         {
-            User user = null;
+            User user;
             if(id == null)
             {
-                user = await _userManager.GetUserAsync(User);
+                user = await ((UserService)_userService).GetUserAsync(User);
             }
             else
             {
-                user = await _userManager.FindByIdAsync(id);
+                user = await ((UserService)_userService).FindByIdAsync(id);
             }
 
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка получения данных пользователя из БД." });
             }
 
             var model = _mapper.Map<UserEditViewModel>(user);
@@ -71,13 +69,17 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> PersonalDataView(UserEditViewModel model)
         {
-            var user = await _userManager.FindByIdAsync(model.UserId);
+            var user = await ((UserService)_userService).FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка получения данных пользователя из БД." });
+            }
+
             user.Convert(model);
 
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
+            if (!await _userService.UpdateAsync(user, model.Email))
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя '{model.Email}'." });
             }
 
             return RedirectToAction("PersonalDataView");
@@ -86,10 +88,10 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> EditUserView(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await ((UserService)_userService).FindByIdAsync(id);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден комментарий с ID '{id}'." });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка получения данных пользователя из БД." });
             }
 
             var model = _mapper.Map<UserEditViewModel>(user);
@@ -103,10 +105,9 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.FindByIdAsync(model.UserId);
             user.Convert(model);
 
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
+            if (!await _userService.UpdateAsync(user, model.Email))
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя '{model.Email}'." });
             }
 
             return RedirectToAction("EditUserView");
@@ -134,14 +135,17 @@ namespace BlogWebApp.Controllers
                 {
                     await uploadImage.CopyToAsync(memoryStream);
 
-                    var user = await _userManager.FindByIdAsync(model.UserId);
+                    var user = await ((UserService)_userService).FindByIdAsync(model.UserId);
+                    if (user == null)
+                    {
+                        return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка получения данных пользователя из БД." });
+                    }
 
                     user.Image = memoryStream.ToArray();
 
-                    var result = await _userManager.UpdateAsync(user);
-                    if (!result.Succeeded)
+                    if (!await _userService.UpdateAsync(user, user.Email))
                     {
-                        return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
+                        return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя '{user.Email}'." });
                     }
                 }
             }
@@ -164,7 +168,6 @@ namespace BlogWebApp.Controllers
         public IActionResult ChangePasswordView()
         {
             var model = new ChangePasswordViewModel();
-
             return View("ChangePasswordView", model);
         }
 
@@ -173,7 +176,7 @@ namespace BlogWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.GetUserAsync(User);
+                var user = await ((UserService)_userService).GetUserAsync(User);
                 if (user == null)
                 {
                     return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
@@ -198,22 +201,30 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> AboutView()
         {
-            var result = _userManager.GetUserAsync(User);
-            var model = _mapper.Map<UserEditViewModel>(result.Result);
+            var user = await ((UserService)_userService).GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+            }
 
+            var model = _mapper.Map<UserEditViewModel>(user);
             return View("AboutView", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> AboutView(UserEditViewModel model)
         {
-            var user = await _userManager.FindByIdAsync(model.UserId);
+            var user = await ((UserService)_userService).FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+            }
+
             user.Convert(model);
 
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
+            if (!await _userService.UpdateAsync(user, user.Email))
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя с ID '{model.UserId}'." });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя '{user.Email}'." });
             }
 
             return View("AboutView", model);
@@ -222,10 +233,10 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> ShowUser(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await ((UserService)_userService).FindByIdAsync(userId);
             if (user == null)
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var model = await _userService.GetUserViewModelAsync(user);

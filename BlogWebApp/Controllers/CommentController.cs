@@ -18,19 +18,16 @@ namespace BlogWebApp.Controllers
         private readonly ICommentService _commentService;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        private readonly ILogger<TagController> _logger;
 
         public CommentController(IBlogArticleService blogArticleService, 
                                  ICommentService commentService, 
                                  UserManager<User> userManager, 
-                                 IMapper mapper, 
-                                 ILogger<TagController> logger)
+                                 IMapper mapper)
         {
             _blogArticleService = blogArticleService;
             _commentService = commentService;
             _userManager = userManager;
             _mapper = mapper;
-            _logger = logger;
         }
         
         public async Task<IActionResult> Index(string id, int? pageNumber)
@@ -101,18 +98,10 @@ namespace BlogWebApp.Controllers
                     }
                 }
 
-                try
+                if(!await _commentService.AddAsync(model))
                 {
-                    await _commentService.Add(model);
-                    var user = await _userManager.FindByIdAsync(model.UserId);
-                    var blogArticle = _blogArticleService.Get(model.BlogArticleId);
-                    _logger.LogInformation($"Пользователь '{user.Email}' добавил комментарий к статье '{blogArticle.Title}'.");
+                    return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при добавлении комментария." });
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Ошибка при добавлении комментария.");
-                }
-                
             }
             else
             {
@@ -153,19 +142,17 @@ namespace BlogWebApp.Controllers
                         model.Image = memoryStream.ToArray();
                     }
                 }
-
-                try
-                {
-                    await _commentService.Edit(model);
-                    var user = await _userManager.GetUserAsync(User);
-                    var blogArticle = _blogArticleService.Get(incomingmModel.BlogArticleId);
-                    _logger.LogInformation($"Пользователь '{user.Email}' изменил комментарий к статье '{blogArticle.Title}'.");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Ошибка при добавлении комментария.");
-                }
                 
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+                }
+
+                if (!await _commentService.EditAsync(model, user))
+                {
+                    return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при изменении комментария." });
+                }
             }
             else
             {
@@ -195,16 +182,15 @@ namespace BlogWebApp.Controllers
         {
             var model = _mapper.Map<DelComment>(incomingmModel);
 
-            try
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                await _commentService.Delete(model);
-                var user = await _userManager.GetUserAsync(User);
-                var blogArticle = _blogArticleService.Get(incomingmModel.BlogArticleId);
-                _logger.LogInformation($"Пользователь '{user.Email}' удалил комментарий к статье '{blogArticle.Title}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
-            catch (Exception ex)
+
+            if (!await _commentService.DeleteAsync(model, user))
             {
-                _logger.LogError(ex, "Ошибка при удалении комментария.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при удалении комментария." });
             }
                  
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });

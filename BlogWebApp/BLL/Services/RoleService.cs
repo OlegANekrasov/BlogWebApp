@@ -10,9 +10,9 @@ namespace BlogWebApp.BLL.Services
     public class RoleService : IRoleService
     {
         private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly ILogger<TagController> _logger;
+        private readonly ILogger<RoleService> _logger;
 
-        public RoleService(RoleManager<ApplicationRole> roleManager, ILogger<TagController> logger)
+        public RoleService(RoleManager<ApplicationRole> roleManager, ILogger<RoleService> logger)
         {
             _roleManager = roleManager; 
             _logger = logger;

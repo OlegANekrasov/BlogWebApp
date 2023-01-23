@@ -3,6 +3,7 @@ using BlogWebApp.BLL.Services.Interfaces;
 using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.Comments;
 using BlogWebApp.BLL.ViewModels.Users;
+using BlogWebApp.Controllers;
 using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
@@ -16,27 +17,72 @@ namespace BlogWebApp.BLL.Services
         private readonly IRepository<Comment> _commentsRepository;
         private readonly IBlogArticleService _blogArticleService;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<CommentService> _logger;
 
-        public CommentService(IRepository<Comment> commentsRepository, IBlogArticleService blogArticleService, UserManager<User> userManager)
+        public CommentService(IRepository<Comment> commentsRepository, 
+                              IBlogArticleService blogArticleService, 
+                              UserManager<User> userManager, 
+                              ILogger<CommentService> logger)
         {
             _commentsRepository = commentsRepository;
             _blogArticleService = blogArticleService;
             _userManager = userManager;
+            _logger = logger;
         }
         
-        public async Task Add(AddComment model)
+        public async Task<bool> AddAsync(AddComment model)
         {
-            await ((CommentsRepository)_commentsRepository).AddAsync(model);
+            try
+            {
+                await ((CommentsRepository)_commentsRepository).AddAsync(model);
+                
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                var blogArticle = _blogArticleService.Get(model.BlogArticleId);
+
+                _logger.LogInformation($"Пользователь '{user.Email}' добавил комментарий к статье '{blogArticle.Title}'.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при добавлении комментария.");
+                return false;
+            }
         }
 
-        public async Task Delete(DelComment model)
+        public async Task<bool> EditAsync(EditComment model, User user)
         {
-            await((CommentsRepository)_commentsRepository).DeleteAsync(model);
+            try
+            {
+                await ((CommentsRepository)_commentsRepository).EditAsync(model);
+
+                var blogArticle = _blogArticleService.Get(model.BlogArticleId);
+
+                _logger.LogInformation($"Пользователь '{user.Email}' изменил комментарий к статье '{blogArticle.Title}'.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при изменении комментария.");
+                return false;
+            }
         }
 
-        public async Task Edit(EditComment model)
+        public async Task<bool> DeleteAsync(DelComment model, User user)
         {
-            await ((CommentsRepository)_commentsRepository).EditAsync(model);
+            try
+            {
+                await ((CommentsRepository)_commentsRepository).DeleteAsync(model);
+
+                var blogArticle = _blogArticleService.Get(model.BlogArticleId);
+
+                _logger.LogInformation($"Пользователь '{user.Email}' удалил комментарий к статье '{blogArticle.Title}'.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при удалении комментария.");
+                return false;
+            }
         }
 
         public Comment Get(string id)

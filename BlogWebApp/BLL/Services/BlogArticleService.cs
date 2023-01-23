@@ -15,9 +15,9 @@ namespace BlogWebApp.BLL.Services
     {
         private readonly IRepository<BlogArticle> _blogArticlesRepository;
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<TagController> _logger;
+        private readonly ILogger<BlogArticleService> _logger;
 
-        public BlogArticleService(UserManager<User> userManager, IRepository<BlogArticle> blogArticlesRepository, ILogger<TagController> logger) 
+        public BlogArticleService(UserManager<User> userManager, IRepository<BlogArticle> blogArticlesRepository, ILogger<BlogArticleService> logger) 
         {
             _userManager = userManager;
             _blogArticlesRepository = blogArticlesRepository;

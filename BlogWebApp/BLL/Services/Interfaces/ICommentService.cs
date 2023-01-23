@@ -7,8 +7,8 @@ namespace BlogWebApp.BLL.Services.Interfaces
     {
         IEnumerable<Comment> GetAll();
         Comment Get(string id);
-        Task Add(AddComment model);
-        Task Edit(EditComment model);
-        Task Delete(DelComment model);
+        Task<bool> AddAsync(AddComment model);
+        Task<bool> EditAsync(EditComment model, User user);
+        Task<bool> DeleteAsync(DelComment model, User user);
     }
 }

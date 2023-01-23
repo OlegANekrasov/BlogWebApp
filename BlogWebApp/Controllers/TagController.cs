@@ -17,14 +17,12 @@ namespace BlogWebApp.Controllers
         private readonly ITagService _tagService;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<TagController> _logger;
 
-        public TagController(ITagService tagService, UserManager<User> userManager, IMapper mapper, ILogger<TagController> logger)
+        public TagController(ITagService tagService, UserManager<User> userManager, IMapper mapper)
         {
             _tagService = tagService;
             _mapper = mapper;
             _userManager = userManager;
-            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -32,8 +30,7 @@ namespace BlogWebApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                var errorStr = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'.";
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
             }
 
             var model = _tagService.GetListTagsViewModel(user); 
@@ -65,15 +62,10 @@ namespace BlogWebApp.Controllers
             }
 
             var model = _mapper.Map<AddTag>(incomingmModel);
-            try
+            if(!await _tagService.AddAsync(model))
             {
-                await _tagService.Add(model);
-                _logger.LogInformation($"Тег '{incomingmModel.Name}' добавлен.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при добавлении тега." });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ошибка при добавлении тега.");
-            }           
             
             return RedirectToAction("Index");
         }
@@ -108,16 +100,10 @@ namespace BlogWebApp.Controllers
             }
 
             var model = _mapper.Map<EditTag>(incomingmModel);
-            try
+            if(!await _tagService.EditAsync(model))
             {
-                await _tagService.Edit(model);
-                _logger.LogInformation($"Тег '{incomingmModel.OldName}' изменен на '{incomingmModel.Name}'.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при изменении тега." });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ошибка при изменении тега.");
-            }
-            
 
             return RedirectToAction("Index");
         }
@@ -147,14 +133,9 @@ namespace BlogWebApp.Controllers
             }
 
             var model = _mapper.Map<DelTag>(incomingmModel);
-            try
+            if(!await _tagService.DeleteAsync(model))
             {
-                await _tagService.Delete(model);
-                _logger.LogInformation($"Тег '{incomingmModel.Name}' удален.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ошибка при удалении тега.");
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при удалении тега." });
             }
 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });

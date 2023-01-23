@@ -6,6 +6,8 @@
 
         public string Name { get; set; }
 
+        public string OldName { get; set; }
+
         public string BlogArticleId { get; set; }
     }
 }

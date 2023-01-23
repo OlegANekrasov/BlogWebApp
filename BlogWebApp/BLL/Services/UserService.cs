@@ -6,6 +6,7 @@ using BlogWebApp.DAL.Interfaces;
 using BlogWebApp.DAL.Models;
 using BlogWebApp.DAL.Repository;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace BlogWebApp.BLL.Services
 {
@@ -15,14 +16,14 @@ namespace BlogWebApp.BLL.Services
         private readonly IMapper _mapper;
         private readonly IRepository<BlogArticle> _blogArticlesRepository;
         private readonly IRepository<Comment> _commentsRepository;
-        private readonly ILogger<TagController> _logger;
+        private readonly ILogger<UserService> _logger;
         private readonly RoleManager<ApplicationRole> _roleManager;
 
         public UserService(UserManager<User> userManager, 
                            IMapper mapper, 
                            IRepository<BlogArticle> blogArticlesRepository, 
                            IRepository<Comment> commentsRepository,
-                           ILogger<TagController> logger,
+                           ILogger<UserService> logger,
                            RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
@@ -39,6 +40,17 @@ namespace BlogWebApp.BLL.Services
             if(user == null)
             {
                 _logger.LogError($"Не найден пользователь с ID '{id}'.");
+            }
+
+            return user;
+        }
+
+        public async Task<User> GetUserAsync(ClaimsPrincipal claimsPrincipalUser)
+        {
+            var user = await _userManager.GetUserAsync(claimsPrincipalUser);
+            if (user == null)
+            {
+                _logger.LogError($"Не найден пользователь с ID '{_userManager.GetUserId(claimsPrincipalUser)}'.");
             }
 
             return user;
@@ -183,6 +195,22 @@ namespace BlogWebApp.BLL.Services
                 return false;
             }
         }
+
+        public async Task<bool> UpdateAsync(User user, string Email)
+        {
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation($"Данные пользователя '{Email}' обновлены.");
+                return true;
+            }
+            else
+            {
+                _logger.LogError($"Ошибка обновления данных пользователя '{Email}'.");
+                return false;
+            }
+        }
+
 
         public async Task<ChangeUserRoleViewModel> CreateChangeUserRoleViewModelAsync(User user, string id)
         {
