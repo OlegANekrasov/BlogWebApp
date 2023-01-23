@@ -35,8 +35,7 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> UserList(int? pageNumber, string sortOrder, string currentFilter, string searchString)
         {
-            var users = _userManager.Users;
-            List<UserListModel> userList = await _userService.CreateUserListModel(users);
+            List<UserListModel> userList = await _userService.CreateUserListModel();
 
             if (searchString != null)
             {
@@ -51,7 +50,7 @@ namespace BlogWebApp.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                userList = userList.Where(s => s.Email.Contains(searchString)).ToList();
+                userList = userList.Where(s => s.Email != null && s.Email.Contains(searchString)).ToList();
             }
 
             ViewData["CurrentSort"] = sortOrder;
@@ -67,71 +66,48 @@ namespace BlogWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            var userRoles = await _userManager.GetRolesAsync(user);
-            if (user != null && userRoles.Any())
+            var user = await _userService.FindByIdAsync(id);
+            if (user == null)
             {
-                var userName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
-                var model = new UserDeleteViewModel(id, userName, user.Email, userRoles);
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден пользователь с ID '{id}'." });
+            }    
+                
+            var userRoles = await _userManager.GetRolesAsync(user);
+           
+            var userName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
+            var model = new UserDeleteViewModel(id, userName, user.Email, userRoles);
 
-                return View("Delete", model);
-            }
-
-            return Redirect("~/Settings/UserList");
+            return View("Delete", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Delete(UserDeleteViewModel model)
         {
             var userId = model.Id;
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userService.FindByIdAsync(userId);
             if (user != null)
             {
-                var result = await _userManager.DeleteAsync(user);
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation($"Пользователь '{model.Email}' удален.");
-                }
-                else
-                {
-                    _logger.LogError($"Ошибка удаления пользователя с ID '{userId}'.");
+                if (! await _userService.DeleteAsync(user, model))
+                { 
                     return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка удаления пользователя с ID '{userId}'." });
                 }
             }
             else
             {
-                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{userId}'." });
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найден пользователь с ID '{userId}'." });
             }
 
             return Redirect("~/Settings/UserList");
         }
 
         [HttpGet]
-        public async Task<IActionResult> SaveRole(string id)
+        public async Task<IActionResult> EditRole(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userService.FindByIdAsync(id);
             if (user != null)
-            { 
-                var userRoles = await _userManager.GetRolesAsync(user);
-                if (userRoles.Any())
-                {
-                    var roles = _roleManager.Roles;
-
-                    var allRoles = new List<string>();
-                    foreach (var role in roles)
-                    {
-                        allRoles.Add(role.Name);
-                    }
-
-                    var useName = user.FirstName + " " + user.MiddleName + " " + user.LastName;
-                    var model = new ChangeUserRoleViewModel(id, useName, user.Email, userRoles, allRoles);
-
-                    return View("SaveRole", model);
-                }
-                else
-                {
-                    return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось определить роли пользователя с ID '{id}'." });
-                }
+            {
+                var model = await _userService.CreateChangeUserRoleViewModelAsync(user, id);
+                return View("EditRole", model);
             }
             else
             {
@@ -140,8 +116,13 @@ namespace BlogWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRole(ChangeUserRoleViewModel model)
+        public async Task<IActionResult> EditRole(ChangeUserRoleViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             var userId = model.Id;
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null)

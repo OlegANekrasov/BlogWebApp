@@ -11,6 +11,9 @@
 
 <div>
     <form id="changerole-form" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="@Model.UserName" class="form-control" type="hidden" />
+        <input asp-for="@Model.Email" class="form-control" type="hidden" />
         <dl class="dl-horizontal">
             <dt>
                 @Html.DisplayNameFor(model => model.UserName)
@@ -27,6 +30,7 @@
             <dt>
                 Роли:
             </dt>
+            <span asp-validation-for="@Model.Roles" class="text-danger"></span>
             @for (var i = 0; i < Model.Roles.Count; i++)
             {
                 <dd>
@@ -39,3 +43,7 @@
         <button id="update-profile-button" type="submit" class="btn btn-lg btn-primary">Сохранить</button>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

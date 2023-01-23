@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BlogWebApp.BLL.Validation.Tags;
+using BlogWebApp.BLL.Validation.Users;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Users
@@ -19,6 +21,7 @@ namespace BlogWebApp.BLL.ViewModels.Users
 
         [DataType(DataType.Text)]
         [Display(Name = "Роли")]
+        [UserRole(ErrorMessage = "Пользователю не назначена роль.")]
         public List<UserRole> Roles { get; set; } = new List<UserRole>();
 
         public ChangeUserRoleViewModel() { }
