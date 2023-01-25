@@ -5,9 +5,12 @@ using BlogWebApp.BLL.Services.Interfaces;
 using BlogWebApp.BLL.ViewModels.Comments;
 using BlogWebApp.BLL.ViewModels.Tags;
 using BlogWebApp.DAL.Models;
+using BlogWebApp.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using System;
 
 namespace BlogWebApp.Controllers
 {
@@ -21,16 +24,19 @@ namespace BlogWebApp.Controllers
         private readonly ICommentService _commentService;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
+        private readonly IHubContext<BlogHub> _hubContext;
 
         public CommentController(IBlogArticleService blogArticleService, 
                                  ICommentService commentService, 
                                  UserManager<User> userManager, 
-                                 IMapper mapper)
+                                 IMapper mapper,
+                                 IHubContext<BlogHub> hubContext)
         {
             _blogArticleService = blogArticleService;
             _commentService = commentService;
             _userManager = userManager;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
         
         public async Task<IActionResult> Index(string id, int? pageNumber)
@@ -111,6 +117,8 @@ namespace BlogWebApp.Controllers
                 ModelState.AddModelError("", "Некорректные данные");
                 return View(incomingmModel);
             }
+
+            await _hubContext.Clients.All.SendAsync("NewMessage", incomingmModel.Content, incomingmModel.UserId, incomingmModel.BlogArticleId);
 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
         }

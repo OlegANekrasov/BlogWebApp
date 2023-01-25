@@ -15,6 +15,7 @@ using NLog;
 using NLog.Web;
 using Microsoft.CodeAnalysis.Differencing;
 using BlogWebApp.BLL.Services.Interfaces;
+using BlogWebApp.Hubs;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -54,6 +55,8 @@ try
 
     builder.Services.AddControllersWithViews();
     builder.Services.AddRazorPages();
+
+    builder.Services.AddSignalR();
 
     builder.Services.Configure<IdentityOptions>(options =>
     {
@@ -149,11 +152,14 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-
-    app.MapRazorPages();
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+        endpoints.MapRazorPages();
+        endpoints.MapHub<BlogHub>("/blogHub");
+    });
     
     app.Run();   
 }

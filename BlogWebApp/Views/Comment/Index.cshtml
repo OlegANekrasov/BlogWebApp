@@ -15,6 +15,8 @@
     var nextDisabled = !Model.PaginatedListComments.HasNextPage ? "disabled" : "";
 }
 
+<input type="hidden" value="@Model.blogArticle.Id" id="BlogArticleId" />
+
 <a asp-action="Index"
    asp-route-blogArticleId="@Model.blogArticle.Id"
    asp-route-pageNumber="@(Model.PaginatedListComments.PageIndex - 1)"
@@ -34,7 +36,7 @@
 
 @foreach (var item in Model.PaginatedListComments)
 {
-    <div class="card"style="width: 36rem;">
+    <div class="card" style="width: 36rem;">
       <div class="card-body">
         @if (item.Image != null && item.Image.Length > 0)
         {
@@ -53,6 +55,11 @@
     </div>    
 }
 
+@if (!Model.PaginatedListComments.HasNextPage)
+{
+    <div id="notify"></div>
+}
+
 <h4> </h4>
 
 <a asp-action="Create"
@@ -60,3 +67,6 @@
    class="btn btn-secondary">
    Добавить комментарий
 </a>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/comment.js"></script>
