@@ -13,6 +13,9 @@ using System.Data;
 
 namespace BlogWebApp.Controllers
 {
+    /// <summary>
+    /// Handling incoming requests from the Users page
+    /// </summary>
     [Authorize(Roles = "Администратор")]
     public class SettingsController : Controller
     {

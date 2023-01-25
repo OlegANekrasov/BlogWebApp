@@ -6,6 +6,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Users
 {
+    /// <summary>
+    /// User data to pass to the view
+    /// </summary>
     public class UserViewModel
     {
         [Required]

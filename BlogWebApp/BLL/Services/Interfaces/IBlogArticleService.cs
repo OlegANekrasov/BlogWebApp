@@ -3,6 +3,9 @@ using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.BLL.Services.Interfaces
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public interface IBlogArticleService
     {
         IEnumerable<BlogArticle> GetAll();

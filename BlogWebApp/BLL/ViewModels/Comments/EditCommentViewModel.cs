@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Comments
 {
+    /// <summary>
+    /// Data to pass to the Edit view
+    /// </summary>
     public class EditCommentViewModel
     {
         [Required]

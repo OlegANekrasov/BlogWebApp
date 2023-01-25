@@ -9,6 +9,9 @@ using BlogWebApp.DAL.Repository;
 
 namespace BlogWebApp.BLL.Services
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public class TagService : ITagService
     {
         private readonly IRepository<Tag> _tagsRepository;

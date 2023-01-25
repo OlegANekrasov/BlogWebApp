@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogWebApp.DAL.Repository
 {
+    /// <summary>
+    /// Implements operations on the BlogArticle model
+    /// </summary>
     public class BlogArticlesRepository : Repository<BlogArticle>
     {
         private readonly IRepository<Tag> _tagsRepository;
@@ -15,6 +18,12 @@ namespace BlogWebApp.DAL.Repository
             _tagsRepository = tagsRepository;
         }
 
+        /// <summary>
+        /// Adding an entry to the database
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task Add(AddBlogArticle model, User user)
         {
             var blogArticle = Set.AsEnumerable().FirstOrDefault(x => x.Title == model.Title);
@@ -35,6 +44,11 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Editing existing entries
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task Edit(EditBlogArticle model)
         {
             var blogArticle = Set.Include(c => c.Tags).FirstOrDefault(o => o.Id == model.Id);    
@@ -82,6 +96,12 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Adding tags to an article
+        /// </summary>
+        /// <param name="listTags"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public async Task AddTags(List<string> listTags, BlogArticle item)
         {
             foreach (var tag in listTags)
@@ -108,6 +128,12 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Removing article tags
+        /// </summary>
+        /// <param name="listTags"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public async Task DelTags(List<string> listTags, BlogArticle item)
         {
             bool update = false;
@@ -133,6 +159,11 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Deleting an entry
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task Delete(DelBlogArticle model)
         {
             var blogArticle = Set.Include(c => c.Tags).FirstOrDefault(o => o.Id == model.Id);
@@ -145,6 +176,11 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Saving the number of views of an article
+        /// </summary>
+        /// <param name="blogArticle"></param>
+        /// <returns></returns>
         public async Task IncCountOfVisit(BlogArticle blogArticle)
         {
             if (blogArticle != null)
@@ -153,28 +189,51 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Selecting all records from the database
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<BlogArticle> GetAll()
         {
             return base.GetAll();
         }
 
+        /// <summary>
+        /// Selecting all records from the database include Tags
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<BlogArticle> GetAllIncludeTags()
         {
             IEnumerable<BlogArticle> allBlogArticle = Set.Include(c => c.Tags);
             return allBlogArticle;
         }
 
+        /// <summary>
+        /// Selecting a record by ID from the database include Comments
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public BlogArticle GetIncludeCommentsById(string id)
         {
             IEnumerable<BlogArticle> blogArticles = Set.Include(c => c.Comments);
             return blogArticles.FirstOrDefault(o => o.Id == id);
         }
 
+        /// <summary>
+        /// Selecting all records of a specific user from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IEnumerable<BlogArticle> GetAllByUserId(string userId)
         {
             return GetAll().Where(o => o.UserId == userId);
         }
 
+        /// <summary>
+        /// Selecting a record by ID from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public BlogArticle GetById(string id)
         {
             IEnumerable<BlogArticle> allBlogArticle = Set.Include(c => c.Tags);

@@ -3,6 +3,9 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BlogWebApp.DAL.Models
 {
+    /// <summary>
+    /// Article properties
+    /// </summary>
     [Table("BlogArticles")]
     public class BlogArticle
     {

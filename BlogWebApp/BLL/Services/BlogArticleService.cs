@@ -11,6 +11,9 @@ using NuGet.Protocol.Core.Types;
 
 namespace BlogWebApp.BLL.Services
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public class BlogArticleService : IBlogArticleService
     {
         private readonly IRepository<BlogArticle> _blogArticlesRepository;

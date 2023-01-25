@@ -10,6 +10,9 @@ using System.Security.Claims;
 
 namespace BlogWebApp.BLL.Services
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;

@@ -3,6 +3,9 @@ using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.BLL.ViewModels.Tags
 {
+    /// <summary>
+    /// Passing Data to the List View
+    /// </summary>
     public class ListTagsViewModel
     {
         public List<TagViewModel> _tags;

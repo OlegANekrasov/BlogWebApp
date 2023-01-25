@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Tags
 {
+    /// <summary>
+    /// Tag data to pass to the view
+    /// </summary>
     public class TagViewModel
     {
         [Required]

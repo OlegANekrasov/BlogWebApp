@@ -1,5 +1,8 @@
 ﻿namespace BlogWebApp.BLL.Models
 {
+    /// <summary>
+    /// Tag data for editing
+    /// </summary>
     public class EditTag
     {
         public string Id { get; set; }

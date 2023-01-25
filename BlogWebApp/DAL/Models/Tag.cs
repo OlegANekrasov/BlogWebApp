@@ -2,6 +2,9 @@
 
 namespace BlogWebApp.DAL.Models
 {
+    /// <summary>
+    /// Tag properties
+    /// </summary>
     [Table("Tags")]
     public class Tag
     {

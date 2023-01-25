@@ -2,6 +2,9 @@
 
 namespace BlogWebApp.DAL.Models
 {
+    /// <summary>
+    /// Adds properties to the IdentityUser
+    /// </summary>
     public class User : IdentityUser
     {
         public string? FirstName { get; set; }

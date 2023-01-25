@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace BlogWebApp.DAL.Repository
 {
+    /// <summary>
+    /// Implements operations on the Comment model
+    /// </summary>
     public class CommentsRepository : Repository<Comment>
     {
         private readonly UserManager<User> userManager;
@@ -20,6 +23,12 @@ namespace BlogWebApp.DAL.Repository
             _blogArticlesRepository = blogArticlesRepository;
         }
 
+        /// <summary>
+        /// Adding an entry to the database
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task AddAsync(AddComment model)
         {
             var item = new Comment()
@@ -36,6 +45,11 @@ namespace BlogWebApp.DAL.Repository
             await CreateAsync(item);
         }
 
+        /// <summary>
+        /// Editing existing entries
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task EditAsync(EditComment model)
         {
             var comment = await GetAsync(model.Id);
@@ -62,6 +76,11 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Deleting an entry
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task DeleteAsync(DelComment model)
         {
             var comment = await GetAsync(model.Id);
@@ -71,21 +90,40 @@ namespace BlogWebApp.DAL.Repository
             }
         }
 
+        /// <summary>
+        /// Selecting all records from the database
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Comment> GetAll()
         {
             return base.GetAll();
         }
 
+        /// <summary>
+        /// Selecting a record by ID from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Comment GetById(string id)
         {
             return GetAll().FirstOrDefault(o => o.Id == id);
         }
 
+        /// <summary>
+        /// Selecting all records of a specific user from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IEnumerable<Comment> GetAllByUserId(string id)
         {
             return GetAll().Where(o => o.UserId == id);
         }
 
+        /// <summary>
+        /// Selecting all records of a particular article from the database
+        /// </summary>
+        /// <param name="blogArticleId"></param>
+        /// <returns></returns>
         public IEnumerable<Comment> GetAllByBlogArticleId(string blogArticleId)
         {
             BlogArticle blogArticle = ((BlogArticlesRepository)_blogArticlesRepository).GetIncludeCommentsById(blogArticleId);

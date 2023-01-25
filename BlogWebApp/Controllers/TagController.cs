@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlogWebApp.Controllers
 {
+    /// <summary>
+    /// Handling incoming requests from the Tags page
+    /// </summary>
     [Authorize]
     public class TagController : Controller
     {

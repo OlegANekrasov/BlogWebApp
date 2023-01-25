@@ -2,6 +2,9 @@
 
 namespace BlogWebApp.BLL.ViewModels.Comments
 {
+    /// <summary>
+    /// Comment data to pass to the view
+    /// </summary>
     public class CommentsViewModel
     {
         public string Id { get; set; }

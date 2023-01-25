@@ -5,6 +5,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Users
 {
+    /// <summary>
+    /// User Role data to pass to the view
+    /// </summary>
     public class ChangeUserRoleViewModel
     {
         [Required]

@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogWebApp.Controllers
 {
+    /// <summary>
+    /// Handling incoming requests from the Comments page
+    /// </summary>
     [Authorize]
     public class CommentController : Controller
     {

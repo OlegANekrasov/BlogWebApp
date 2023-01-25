@@ -1,5 +1,9 @@
 ﻿namespace BlogWebApp.BLL.Models
 {
+
+    /// <summary>
+    /// Comment data to add
+    /// </summary>
     public class AddComment
     {
         public string Content { get; set; }

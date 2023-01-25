@@ -13,6 +13,9 @@ using System.Data;
 
 namespace BlogWebApp.Controllers
 {
+    /// <summary>
+    /// Handling incoming requests from the Articles page
+    /// </summary>
     [Authorize]
     public class BlogArticleController : Controller
     {

@@ -3,8 +3,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BlogWebApp.DAL.EF
 {
+    /// <summary>
+    /// Performs Database Initialization by standard roles and a user with the Administrator role
+    /// </summary>
     public class AdminInitializer
     {
+        /// <summary>
+        /// The roles "administrator", "moderator", "user" are checked (if they are not, then they are created) 
+        /// The presence of the user olegnekrasov@live.com is also checked (if not, 
+        /// then it is created with the role "administrator" and the password "@1234567Nek")
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static async Task Initialize(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetService<RoleManager<ApplicationRole>>();

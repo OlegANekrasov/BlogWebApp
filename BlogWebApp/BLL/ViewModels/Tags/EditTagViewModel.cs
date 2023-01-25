@@ -4,6 +4,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Tags
 {
+    /// <summary>
+    /// Data to pass to the Edit view
+    /// </summary>
     public class EditTagViewModel
     {
         [Required]

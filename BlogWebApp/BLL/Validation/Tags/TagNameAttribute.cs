@@ -4,6 +4,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.Validation.Tags
 {
+    /// <summary>
+    /// Tag validation attribute - one word
+    /// </summary>
     public class TagNameAttribute : ValidationAttribute
     {
         public TagNameAttribute() { }

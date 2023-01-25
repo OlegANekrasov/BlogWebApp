@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Comments
 {
+    /// <summary>
+    /// Article data to pass to the view
+    /// </summary>
     public class BlogArticleModel
     {
         public string Id { get; set; }

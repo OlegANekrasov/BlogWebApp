@@ -11,6 +11,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.Controllers
 {
+    /// <summary>
+    /// Handling incoming requests from the Roles page
+    /// </summary>
     [Authorize(Roles = "Администратор")]
     public class RoleController : Controller
     {

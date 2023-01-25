@@ -6,6 +6,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.BlogArticles
 {
+    /// <summary>
+    /// Data to pass to the Create view
+    /// </summary>
     public class CreateBlogArticleViewModel
     {
         [Required]

@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlogWebApp.BLL.Validation.Users
 {
+    /// <summary>
+    /// Role validation attribute - unique name
+    /// </summary>
     public class UserRoleAttribute : ValidationAttribute
     {
         public UserRoleAttribute() { }

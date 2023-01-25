@@ -3,18 +3,27 @@ using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.DAL.Extentions
 {
+    /// <summary>
+    /// Расширение, которое позволяет получить из вьюмодели модель пользователя
+    /// </summary>
     public static class UserFromModel
     {
-        public static User Convert(this User user, UserEditViewModel usereditvm)
+        /// <summary>
+        /// Converts the viewmodel to a user model
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userEditVM"></param>
+        /// <returns></returns>
+        public static User Convert(this User user, UserEditViewModel userEditVM)
         {
-            user.Image = usereditvm.Image;
-            user.LastName = usereditvm.LastName;
-            user.MiddleName = usereditvm.MiddleName;
-            user.FirstName = usereditvm.FirstName;
-            user.Email = usereditvm.Email;
-            user.BirthDate = usereditvm.BirthDate;
-            user.UserName = usereditvm.UserName;
-            user.About = usereditvm.About;
+            user.Image = userEditVM.Image;
+            user.LastName = userEditVM.LastName;
+            user.MiddleName = userEditVM.MiddleName;
+            user.FirstName = userEditVM.FirstName;
+            user.Email = userEditVM.Email;
+            user.BirthDate = userEditVM.BirthDate;
+            user.UserName = userEditVM.UserName;
+            user.About = userEditVM.About;
 
             return user;
         }

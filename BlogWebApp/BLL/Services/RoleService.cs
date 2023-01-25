@@ -7,6 +7,9 @@ using System.Data;
 
 namespace BlogWebApp.BLL.Services
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public class RoleService : IRoleService
     {
         private readonly RoleManager<ApplicationRole> _roleManager;

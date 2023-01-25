@@ -4,6 +4,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Roles
 {
+    /// <summary>
+    /// Data to pass to the Edit view
+    /// </summary>
     public class EditRoleViewModel
     {
         public string Id { get; set; }

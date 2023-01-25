@@ -17,6 +17,9 @@ using System.IO.Compression;
 
 namespace BlogWebApp.Controllers
 {
+    /// <summary>
+    /// Processing incoming requests from the user's personal page
+    /// </summary>
     [Authorize]
     public class UserManagementController : Controller
     {

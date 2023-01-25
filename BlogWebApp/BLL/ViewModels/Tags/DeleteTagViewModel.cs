@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Tags
 {
+    /// <summary>
+    /// Data to pass to the Delete view
+    /// </summary>
     public class DeleteTagViewModel
     {
         [Required]

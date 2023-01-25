@@ -5,6 +5,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Tags
 {
+    /// <summary>
+    /// Data to pass to the Create view
+    /// </summary>
     public class CreateTagViewModel
     {
         [Required]

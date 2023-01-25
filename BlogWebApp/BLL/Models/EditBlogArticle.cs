@@ -3,6 +3,9 @@ using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.BLL.Models
 {
+    /// <summary>
+    /// Article data for editing
+    /// </summary>
     public class EditBlogArticle
     {
         public string Id { get; set; }

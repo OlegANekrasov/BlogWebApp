@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Users
 {
+    /// <summary>
+    /// User password data to pass to the view
+    /// </summary>
     public class ChangePasswordViewModel
     {
         [Required]

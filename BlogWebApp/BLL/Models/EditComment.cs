@@ -1,5 +1,8 @@
 ﻿namespace BlogWebApp.BLL.Models
 {
+    /// <summary>
+    /// Comment data for editing
+    /// </summary>
     public class EditComment
     {
         public string Id { get; set; }

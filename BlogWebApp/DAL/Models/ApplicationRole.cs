@@ -2,6 +2,9 @@
 
 namespace BlogWebApp.DAL.Models
 {
+    /// <summary>
+    /// Adds properties to the IdentityRole
+    /// </summary>
     public class ApplicationRole : IdentityRole
     {
         public string? Description { get; set; }

@@ -2,6 +2,9 @@
 
 namespace BlogWebApp.DAL.Models
 {
+    /// <summary>
+    /// Comment properties
+    /// </summary>
     [Table("Comments")]
     public class Comment
     {

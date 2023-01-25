@@ -4,6 +4,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Users
 {
+    /// <summary>
+    /// User data to pass to the Edit view
+    /// </summary>
     public class UserEditViewModel
     {
         [Required]

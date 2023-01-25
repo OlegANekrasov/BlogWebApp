@@ -5,12 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-BlogWebApp-7712effe-5260-4c07-af8e-d43cb2eb4cb7</UserSecretsId>
-    <ApplicationIcon>blog.ico</ApplicationIcon>
+    <ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="blog.ico" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
@@ -28,6 +24,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.11" />
     <PackageReference Include="NLog" Version="5.1.1" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logs\" />
   </ItemGroup>
 
 </Project>

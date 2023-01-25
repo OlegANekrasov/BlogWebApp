@@ -12,6 +12,9 @@ using System.Drawing.Printing;
 
 namespace BlogWebApp.BLL.Services
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public class CommentService : ICommentService
     {
         private readonly IRepository<Comment> _commentsRepository;

@@ -108,14 +108,17 @@ try
         }
     }
 
-    // Configure the HTTP request pipeline.
+    app.Environment.EnvironmentName = "Production";
+
+    // Configure the HTTP request pipeline. 
     if (app.Environment.IsDevelopment())
     {
         app.UseMigrationsEndPoint();
-    }
+        app.UseDeveloperExceptionPage();
+}
     else
     {
-        app.UseExceptionHandler("/Home/Error");
+        app.UseExceptionHandler("/Home/SomethingWentWrong");
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
     }
@@ -151,8 +154,8 @@ try
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     app.MapRazorPages();
-
-    app.Run();
+    
+    app.Run();   
 }
 catch (Exception exception)
 {

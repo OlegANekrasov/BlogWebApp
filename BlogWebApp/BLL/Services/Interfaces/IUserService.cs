@@ -3,6 +3,9 @@ using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.BLL.Services.Interfaces
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public interface IUserService
     {
         Task<User> FindByIdAsync(string id);

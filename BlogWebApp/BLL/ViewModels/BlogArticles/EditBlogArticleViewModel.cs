@@ -5,6 +5,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.BlogArticles
 {
+    /// <summary>
+    /// Data to pass to the Edit view
+    /// </summary>
     public class EditBlogArticleViewModel
     {
         [Required]

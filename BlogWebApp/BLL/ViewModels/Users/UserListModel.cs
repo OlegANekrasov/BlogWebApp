@@ -1,5 +1,8 @@
 ﻿namespace BlogWebApp.BLL.ViewModels.Users
 {
+    /// <summary>
+    /// User data to pass to the List view
+    /// </summary>
     public class UserListModel
     {
         public string Id { get; set; }

@@ -2,6 +2,9 @@
 
 namespace BlogWebApp.BLL.ViewModels.BlogArticles
 {
+    /// <summary>
+    /// Passing Data to the List View
+    /// </summary>
     public class BlogArticleListViewModel
     {
         public List<BlogArticleViewModel> _blogArticles;

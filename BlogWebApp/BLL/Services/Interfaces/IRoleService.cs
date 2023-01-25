@@ -4,6 +4,9 @@ using BlogWebApp.DAL.Models;
 
 namespace BlogWebApp.BLL.Services.Interfaces
 {
+    /// <summary>
+    /// Describes CRUD operations
+    /// </summary>
     public interface IRoleService
     {
         List<ApplicationRole> GetAll();

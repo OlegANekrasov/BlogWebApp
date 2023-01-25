@@ -5,6 +5,9 @@ using BlogWebApp.BLL.ViewModels;
 
 namespace BlogWebApp.Controllers
 {
+    /// <summary>
+    /// Default controller - handle incoming requests from the main page
+    /// </summary>
     [AllowAnonymous]
     public class HomeController : Controller
     {
@@ -46,11 +49,14 @@ namespace BlogWebApp.Controllers
 
         public IActionResult SomethingWentWrong(string str)
         {
-            ViewBag.Message = str;
-
-            if(!str.Contains("favicon"))
+            if (str != null)
             {
-                _logger.LogError("Что-то пошло не так : " + str);
+                ViewBag.Message = str;
+
+                if (!str.Contains("favicon"))
+                {
+                    _logger.LogError("Что-то пошло не так : " + str);
+                }
             }
 
             return View();

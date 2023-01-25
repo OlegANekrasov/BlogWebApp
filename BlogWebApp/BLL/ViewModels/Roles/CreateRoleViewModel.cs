@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Roles
 {
+    /// <summary>
+    /// Data to pass to the Create view
+    /// </summary>
     public class CreateRoleViewModel
     {
         [Required]

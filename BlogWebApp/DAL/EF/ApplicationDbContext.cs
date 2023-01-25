@@ -5,6 +5,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace BlogWebApp.DAL.EF
 {
+    /// <summary>
+    /// To interact with the database through Entity Framework Core
+    /// </summary>
     public class ApplicationDbContext : IdentityDbContext<User, ApplicationRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

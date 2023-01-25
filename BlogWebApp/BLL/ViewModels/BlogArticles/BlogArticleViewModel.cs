@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace BlogWebApp.BLL.ViewModels.BlogArticles
 {
+    /// <summary>
+    /// Article data to pass to the view
+    /// </summary>
     public class BlogArticleViewModel
     {
         public string Id { get; set; }

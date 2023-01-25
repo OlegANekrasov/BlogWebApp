@@ -1,5 +1,8 @@
 ﻿namespace BlogWebApp.BLL.ViewModels.Roles
 {
+    /// <summary>
+    /// Role data to pass to the view
+    /// </summary>
     public class RoleViewModel
     {
         public string Id { get; set; }

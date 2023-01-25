@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace BlogWebApp.BLL.ViewModels
 {
+    /// <summary>
+    /// Implements paging of the data in the view
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class PaginatedList<T> : List<T>
     {
         public int PageIndex { get; private set; }

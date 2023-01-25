@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Roles
 {
+    /// <summary>
+    /// Data to pass to the Delete view
+    /// </summary>
     public class DeleteRoleViewModel
     {
         public string Id { get; set; }
