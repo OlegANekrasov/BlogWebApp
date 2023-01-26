@@ -3,33 +3,35 @@
     .build();
 
 // получение сообщения от сервера
-hubConnection.on('NewMessage', function (content, userId, blogArticleId) {
+hubConnection.on('NewMessage', function (content, userId, blogArticleId, user, date, image) {
     
     if (blogArticleId != document.getElementById('BlogArticleId').value)
         return;
+    var html = '';
+    if (image != null) {
+        html = '<div class="card" style="width: 36rem;">' +
+                    '<div class="card-body">' + 
+                        '<img style=\'height:120px;\' src="data:image/jpeg;base64,' + image + '"/>' +
+                        '<p class="card-text">' + content + '</p>' +
+                        '<a href="/UserManagement/ShowUser?userId=' + userId + '">' + user + ' </a>' +
+                        date +
+                    '</div>' +
+                '</div> ';
+    }
+    else
+    {
+        html = '<div class="card" style="width: 36rem;">' +
+            '<div class="card-body">' +
+                        '<p class="card-text">' + content + '</p>' +
+                        '<a href="/UserManagement/ShowUser?userId=' + userId + '">' + user + ' </a>' +
+                        date +
+                    '</div>' +
+               '</div> ';
+    }
 
-    alert(document.getElementById('BlogArticleId').value);
+
 
     /*
-    let elemCard = document.createElement("div");
-    elemCard.classList.add('card');
-    elemCard.style.cssText += 'width: 36rem;';
-
-    let elemCardBody = document.createElement("div");
-    elemCardBody.classList.add('card-body');
-
-    let elemP = document.createElement("p");
-    elemCard.classList.add('card-text');
-    elemP.appendChild(document.createTextNode(content));
-
-    let elemA = document.createElement("a");
-    elemA.appendChild(document.createTextNode(userId));
-
-    elemCardBody.appendChild(elemP);
-    elemCardBody.appendChild(elemA);
-    elemCard.appendChild(elemCardBody);
-
-    document.getElementById("notify").appendChild(elem);
 
                         '@if (item.Image != null && item.Image.Length > 0)' +
                         '{' +
@@ -46,13 +48,6 @@ hubConnection.on('NewMessage', function (content, userId, blogArticleId) {
     */
     
 
-    var html = '<div class="card" style="width: 36rem;">' +
-                    '<div class="card-body">' + 
-                        '<p class="card-text">' + content + '</p>' +
-                        '<a href="/UserManagement/ShowUser?userId=' + userId + '">' + userId + '</a>' +
-                        " 25.01.2023" +
-                    '</div>' +
-                '</div> ';
 
     document.getElementById('notify').innerHTML += html;  
 

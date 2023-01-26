@@ -93,11 +93,11 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateCommentViewModel incomingmModel, IFormFile uploadImage)
         {
+            var model = _mapper.Map<AddComment>(incomingmModel);
+
             ModelState.Remove("uploadImage");  
             if (ModelState.IsValid)
             {
-                var model = _mapper.Map<AddComment>(incomingmModel);
-
                 if (uploadImage != null)
                 {
                     using (var memoryStream = new MemoryStream())
@@ -118,7 +118,9 @@ namespace BlogWebApp.Controllers
                 return View(incomingmModel);
             }
 
-            await _hubContext.Clients.All.SendAsync("NewMessage", incomingmModel.Content, incomingmModel.UserId, incomingmModel.BlogArticleId);
+            var hubModel = await ((CommentService)_commentService).GetSendHubModelAsync(model);
+            await _hubContext.Clients.All.SendAsync("NewMessage", hubModel.Content, hubModel.AuthorId, 
+                                                                  hubModel.blogArticleId, hubModel.Author, hubModel.DateCreate, hubModel.Image);
 
             return RedirectToAction("Index", new { id = incomingmModel.BlogArticleId });
         }

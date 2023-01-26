@@ -157,5 +157,24 @@ namespace BlogWebApp.BLL.Services
 
             return model;
         }
+
+        public async Task<SendHubModel> GetSendHubModelAsync(AddComment comment)
+        {
+            var model = new SendHubModel()
+            {
+                Content = comment.Content,
+                AuthorId = comment.UserId,
+                Author = (await _userManager.FindByIdAsync(comment.UserId)).Email,
+                blogArticleId = comment.BlogArticleId,
+                DateCreate = DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+            };
+
+            if(comment.Image != null && comment.Image.Length > 0)
+            {
+                model.Image = Convert.ToBase64String(comment.Image);
+            }
+
+            return model;
+        }
     }
 }
