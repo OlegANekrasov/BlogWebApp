@@ -48,8 +48,11 @@
         @if (ViewBag.UserEmail == item.Author || (await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorRole")).Succeeded
                                               || (await AuthorizationService.AuthorizeAsync(User, "RequireModeratorRole")).Succeeded)
         {
-            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-outline-secondary"> Редактировать </a>
-            <a asp-action="Delete" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" class="btn btn-sm btn-outline-danger"> Удалить </a>
+            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" title="Редактировать"> 
+                <img style='height:24px;' src="@Url.Content("~/images/Edit.png")" /></a>
+            <text>  </text>
+            <a asp-action="Delete" asp-route-id="@item.Id" asp-route-blogArticleId="@Model.blogArticle.Id" title="Удалить">
+                <img style='height:32px;' src="@Url.Content("~/images/Delete.png")" /></a>
         }
       </div>
     </div>    

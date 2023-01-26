@@ -93,6 +93,28 @@ namespace BlogWebApp.Migrations
                     b.ToTable("BlogArticles");
                 });
 
+            modelBuilder.Entity("BlogWebApp.DAL.Models.BlogArticleImage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BlogArticleId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogArticleId");
+
+                    b.ToTable("BlogArticleImages");
+                });
+
             modelBuilder.Entity("BlogWebApp.DAL.Models.Comment", b =>
                 {
                     b.Property<string>("Id")
@@ -356,6 +378,17 @@ namespace BlogWebApp.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BlogWebApp.DAL.Models.BlogArticleImage", b =>
+                {
+                    b.HasOne("BlogWebApp.DAL.Models.BlogArticle", "BlogArticle")
+                        .WithMany("Images")
+                        .HasForeignKey("BlogArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlogArticle");
+                });
+
             modelBuilder.Entity("BlogWebApp.DAL.Models.Comment", b =>
                 {
                     b.HasOne("BlogWebApp.DAL.Models.BlogArticle", "BlogArticle")
@@ -429,6 +462,8 @@ namespace BlogWebApp.Migrations
             modelBuilder.Entity("BlogWebApp.DAL.Models.BlogArticle", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("BlogWebApp.DAL.Models.User", b =>

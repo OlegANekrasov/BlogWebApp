@@ -16,6 +16,7 @@ using NLog.Web;
 using Microsoft.CodeAnalysis.Differencing;
 using BlogWebApp.BLL.Services.Interfaces;
 using BlogWebApp.Hubs;
+using BlogWebApp.BLL;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
