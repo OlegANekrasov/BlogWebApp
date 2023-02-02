@@ -13,7 +13,7 @@ namespace BlogWebApp.DAL.Models
         public byte[]? Image { get; set; }
         public string? ImageName { get; set; }
 
-        public string BlogArticleId { get; set; }
+        public string? BlogArticleId { get; set; }
         public BlogArticle? BlogArticle { get; set; }
     }
 }

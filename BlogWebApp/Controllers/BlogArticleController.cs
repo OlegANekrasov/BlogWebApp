@@ -21,16 +21,19 @@ namespace BlogWebApp.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IBlogArticleService _blogArticleService;
+        private readonly IBlogArticleImageService _blogArticleImageService;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
 
         public BlogArticleController(UserManager<User> userManager, 
                                      IBlogArticleService blogArticleService, 
+                                     IBlogArticleImageService blogArticleImageService,
                                      IMapper mapper, 
                                      ITagService tagService)
         {
             _userManager = userManager;
             _blogArticleService = blogArticleService;
+            _blogArticleImageService = blogArticleImageService;
             _mapper = mapper;
             _tagService = tagService;
         }
@@ -216,5 +219,60 @@ namespace BlogWebApp.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public ActionResult UploadImage(string id)
+        {
+            var model = new PhotoBlogArticleViewModel() { BlogArticleId = id };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UploadImage(PhotoBlogArticleViewModel model, IFormFile uploadImage)
+        {
+            var id = model.BlogArticleId;
+            if (uploadImage != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await uploadImage.CopyToAsync(memoryStream);
+
+                    var blogArticle = _blogArticleService.Get(id);
+                    if (blogArticle == null)
+                    {
+                        var errorStr = $"Не найдена статья с ID '{id}'.";
+                        return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
+                    }
+
+                    var addBlogArticleImage = new AddBlogArticleImage()
+                    {
+                        Image = memoryStream.ToArray(),
+                        ImageName = model.ImageName,
+                        BlogArticleId = model.BlogArticleId
+                    };
+
+                    if (!await _blogArticleImageService.AddAsync(addBlogArticleImage))
+                    {
+                        return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при добавлении фото." });
+                    }
+
+                    /*
+                    blogArticle.Images.Add(memoryStream.ToArray()) = ;
+
+                    if (!await _userService.UpdateAsync(user, user.Email))
+                    {
+                        return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя '{user.Email}'." });
+                    }
+                    */
+                }
+            }
+            else
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка загрузки файла." });
+            }
+
+            return RedirectToAction("Edit", new { id = id });
+        }
+
     }
 }

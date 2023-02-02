@@ -7,6 +7,24 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script src="~/js/cloudflare/jquery.min.js"></script>
+
+<!-- jQuery Modal -->
+<script src="~/js/cloudflare/jquery.modal.min.js"></script>
+
+<link rel="stylesheet" href="~/css/jquery.modal.min.css"/>
+
+<!-- Modal HTML embedded directly into document -->
+<div id="imageuser" class="modal">
+    <div id="imageuser" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                @Html.Raw("<img class=\"d-block w-100\" src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.Image) + "\" alt=\"\">")
+            </div>
+         </div>
+    </div>
+</div>
+
 <h2>Пользователь</h2>
 <div class="row">
     <div class="col-md-6">
@@ -14,7 +32,7 @@
             <div class="form-floating">
                 @if (Model.Image != null)
                 {
-                    @Html.Raw("<img style='height:150px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.Image) + "\" />")
+                    @Html.Raw("<a href=\"#imageuser\" rel=\"modal:open\"> <img style='height:120px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.Image) + "\" /> </a>")
                 }
             </div>
             <div>                

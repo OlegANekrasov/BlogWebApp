@@ -88,10 +88,12 @@ try
 
     builder.Services.AddUnitOfWork();
     builder.Services.AddCustomRepository<BlogArticle, BlogArticlesRepository>();
+    builder.Services.AddCustomRepository<BlogArticleImage, BlogArticleImageRepository>();
     builder.Services.AddCustomRepository<Tag, TagsRepository>();
     builder.Services.AddCustomRepository<Comment, CommentsRepository>();
 
     builder.Services.AddScoped<IBlogArticleService, BlogArticleService>();
+    builder.Services.AddScoped<IBlogArticleImageService, BlogArticleImageService>();
     builder.Services.AddScoped<ITagService, TagService>();
     builder.Services.AddScoped<ICommentService, CommentService>();
     builder.Services.AddScoped<IUserService, UserService>();

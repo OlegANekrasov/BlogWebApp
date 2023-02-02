@@ -236,7 +236,7 @@ namespace BlogWebApp.DAL.Repository
         /// <returns></returns>
         public BlogArticle GetById(string id)
         {
-            IEnumerable<BlogArticle> allBlogArticle = Set.Include(c => c.Tags);
+            IEnumerable<BlogArticle> allBlogArticle = Set.Include(c => c.Tags).Include(c => c.Images);
             if(allBlogArticle.Any())
             {
                 return allBlogArticle.FirstOrDefault(o => o.Id == id);

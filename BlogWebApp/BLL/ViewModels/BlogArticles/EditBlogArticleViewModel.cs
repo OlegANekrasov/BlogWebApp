@@ -21,6 +21,7 @@ namespace BlogWebApp.BLL.ViewModels.BlogArticles
         public string Description { get; set; }
 
         public List<TagSelected> Tags { get; set; } = new List<TagSelected>();
+        public List<BlogArticleImage> Images { get; set; }
 
         public string Id { get; set; }
         public string UserId { get; set; }
