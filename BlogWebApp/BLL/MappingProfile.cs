@@ -38,6 +38,8 @@ namespace BlogWebApp.BLL
             CreateMap<CreateCommentViewModel, AddComment>();
             CreateMap<EditCommentViewModel, EditComment>();
             CreateMap<DeleteCommentViewModel, DelComment>();
+
+            CreateMap<DeletePhotoBlogArticleViewModel, DelBlogArticleImage>();
         }
     }
 }

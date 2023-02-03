@@ -109,15 +109,16 @@ namespace BlogWebApp.BLL.Services
             return null;
         }
 
-        public async Task<BlogArticleViewModel> GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author, int? pageNumber, int pageSize)
+        public async Task<BlogArticleCommentsViewModel> GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author, int? pageNumber, int pageSize)
         {
-            BlogArticleViewModel model = new BlogArticleViewModel()
+            BlogArticleCommentsViewModel model = new BlogArticleCommentsViewModel()
             {
                 blogArticle = new BlogArticleModel()
                 {
                     Id = id,
                     Title = blogArticle.Title,
                     Description = blogArticle.Description,
+                    Images = blogArticle.Images,
                     Tags = ((BlogArticleService)_blogArticleService).SetTagsInModel(blogArticle.Tags),
                     UserName = author.UserName,
                     UserId = author.Id,

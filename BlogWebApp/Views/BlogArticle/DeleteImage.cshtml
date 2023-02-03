@@ -1,0 +1,28 @@
+﻿@using BlogWebApp.Controllers
+@using BlogWebApp.BLL.ViewModels.BlogArticles
+@model DeletePhotoBlogArticleViewModel
+
+@{
+    ViewData["Title"] = "Фото";
+}
+
+<h2>Удалить фото?</h2>
+
+<div>
+    <hr />
+    <form id="changerole-form" method="post">
+        <input asp-for="@Model.Id" class="form-control" type="hidden" />
+        <input asp-for="@Model.BlogArticleId" class="form-control" type="hidden" />
+        <input asp-for="@Model.ImageName" class="form-control" type="hidden" />
+        <div class="form-floating">
+            @if (Model.Image != null)
+            {
+                @Html.Raw("<img style='height:150px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.Image) + "\" />")
+            }
+        </div>
+        <div>                
+            <p></p>
+        </div>
+        <button id="update-profile-button" type="submit" class="btn btn-lg btn-danger">Удалить</button>
+    </form>
+</div>

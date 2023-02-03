@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BlogWebApp.DAL.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace BlogWebApp.BLL.ViewModels.Comments
@@ -30,5 +31,7 @@ namespace BlogWebApp.BLL.ViewModels.Comments
         [DataType(DataType.Text)]
         [Display(Name = "Дата создания")]
         public string DateCreation { get; set; }
+
+        public List<BlogArticleImage> Images { get; set; } = new List<BlogArticleImage>();
     }
 }

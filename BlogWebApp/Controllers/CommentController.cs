@@ -70,7 +70,7 @@ namespace BlogWebApp.Controllers
             }
 
             var pageSize = 5;
-            BlogArticleViewModel model = await ((CommentService)_commentService).GetBlogArticleViewModel(id, blogArticle, user, pageNumber, pageSize);
+            BlogArticleCommentsViewModel model = await ((CommentService)_commentService).GetBlogArticleViewModel(id, blogArticle, user, pageNumber, pageSize);
 
             ViewBag.UserEmail = currentUser.Email;
             return View(model);

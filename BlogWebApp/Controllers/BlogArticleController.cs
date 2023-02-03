@@ -4,6 +4,7 @@ using BlogWebApp.BLL.Services;
 using BlogWebApp.BLL.Services.Interfaces;
 using BlogWebApp.BLL.ViewModels;
 using BlogWebApp.BLL.ViewModels.BlogArticles;
+using BlogWebApp.BLL.ViewModels.Comments;
 using BlogWebApp.BLL.ViewModels.Users;
 using BlogWebApp.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -230,17 +231,17 @@ namespace BlogWebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> UploadImage(PhotoBlogArticleViewModel model, IFormFile uploadImage)
         {
-            var id = model.BlogArticleId;
+            var blogArticleId = model.BlogArticleId;
             if (uploadImage != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
                     await uploadImage.CopyToAsync(memoryStream);
 
-                    var blogArticle = _blogArticleService.Get(id);
+                    var blogArticle = _blogArticleService.Get(blogArticleId);
                     if (blogArticle == null)
                     {
-                        var errorStr = $"Не найдена статья с ID '{id}'.";
+                        var errorStr = $"Не найдена статья с ID '{blogArticleId}'.";
                         return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
                     }
 
@@ -255,15 +256,6 @@ namespace BlogWebApp.Controllers
                     {
                         return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при добавлении фото." });
                     }
-
-                    /*
-                    blogArticle.Images.Add(memoryStream.ToArray()) = ;
-
-                    if (!await _userService.UpdateAsync(user, user.Email))
-                    {
-                        return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка обновления данных пользователя '{user.Email}'." });
-                    }
-                    */
                 }
             }
             else
@@ -271,7 +263,46 @@ namespace BlogWebApp.Controllers
                 return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Ошибка загрузки файла." });
             }
 
-            return RedirectToAction("Edit", new { id = id });
+            return RedirectToAction("Edit", new { id = blogArticleId });
+        }
+
+        [HttpGet]
+        public ActionResult DeleteImage(string id)
+        {
+            var image = _blogArticleImageService.Get(id);
+            if (image == null)
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не найдено фото с ID '{id}'." });
+            }
+
+            DeletePhotoBlogArticleViewModel model = new DeletePhotoBlogArticleViewModel()
+            {
+                Id = id,
+                BlogArticleId = image.BlogArticleId,
+                Image = image.Image
+            };
+
+            return View("DeleteImage", model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteImage(DeletePhotoBlogArticleViewModel model)
+        {
+            var id = model.Id;
+            var image = _blogArticleImageService.Get(id);
+            if (image == null)
+            {
+                var errorStr = $"Не найдено фото с ID '{id}'.";
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = errorStr });
+            }
+
+            var delBlogArticleImage = _mapper.Map<DelBlogArticleImage>(model);
+            if (!await _blogArticleImageService.DeleteAsync(delBlogArticleImage))
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при удалении фото." });
+            }
+
+            return RedirectToAction("Edit", new { id = model.BlogArticleId });
         }
 
     }
