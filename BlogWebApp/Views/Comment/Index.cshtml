@@ -15,6 +15,19 @@
     var nextDisabled = !Model.PaginatedListComments.HasNextPage ? "disabled" : "";
 }
 
+<link rel="stylesheet" href="~/lib/bootstrap/bootstrap-4.0.0/dist/css/bootstrap.min.css"/>
+
+<div class="modal" id="modal-photo" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+          <img id="comment-photo" style="width: 768px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <input type="hidden" value="@Model.blogArticle.Id" id="BlogArticleId" />
 
 <a asp-action="Index"
@@ -40,7 +53,8 @@
       <div class="card-body">
         @if (item.Image != null && item.Image.Length > 0)
         {
-            @Html.Raw("<img style='height:120px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(item.Image) + "\" />")
+            @Html.Raw("<img data-bs-toggle=\"modal\" data-bs-target=\"#modal-photo\" data-bs-img=" + Convert.ToBase64String(item.Image) + 
+                " style='height:120px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(item.Image) + "\" />")
         }
         <p class="card-text">@item.Content</p>
         <a asp-controller="UserManagement" asp-action="ShowUser" asp-route-userId="@item.AuthorId"> @Html.DisplayFor(modelItem => item.Author) </a>
@@ -73,3 +87,25 @@
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/comment.js"></script>
+<script src="~/lib/bootstrap/bootstrap-4.0.0/dist/js/vendor/jquery-slim.min.js"></script>
+<script src="~/lib/bootstrap/bootstrap-4.0.0/js/dist/util.js"></script>
+<script src="~/lib/bootstrap/bootstrap-4.0.0/js/dist/modal.js"></script>
+
+
+<script>
+    var commentPhoto = document.getElementById('comment-photo')
+    var modalPhoto = document.getElementById('modal-photo')
+    modalPhoto.addEventListener('show.bs.modal', function (event) {
+          // Кнопка, запускающая модальное окно
+          var button = event.relatedTarget
+          
+          // Извлечь информацию из атрибутов data-bs- *
+          var img = button.getAttribute('data-bs-img')
+          
+          // При необходимости вы можете инициировать запрос AJAX здесь
+          // а затем выполните обновление в обратном вызове.
+          //
+          // Обновите содержимое модального окна.
+          commentPhoto.src = "data:image/jpeg;base64," + img
+    })
+</script>
