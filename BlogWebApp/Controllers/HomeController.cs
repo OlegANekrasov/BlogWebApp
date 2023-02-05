@@ -9,6 +9,7 @@ namespace BlogWebApp.Controllers
     /// Default controller - handle incoming requests from the main page
     /// </summary>
     [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

@@ -46,7 +46,7 @@ try
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
     builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-        .AddRoles<ApplicationRole>()   // долно быть первым
+        .AddRoles<ApplicationRole>()   // должно быть первым
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultUI()
         .AddDefaultTokenProviders();
@@ -121,7 +121,7 @@ try
     {
         app.UseMigrationsEndPoint();
         app.UseDeveloperExceptionPage();
-}
+    }
     else
     {
         app.UseExceptionHandler("/Home/SomethingWentWrong");
