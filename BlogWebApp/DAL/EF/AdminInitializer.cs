@@ -52,7 +52,7 @@ namespace BlogWebApp.DAL.EF
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(user, "@1234567Nek");
-                await userManager.AddToRoleAsync(user, "администратор");
+                await userManager.AddToRoleAsync(user, "Администратор");
             }
 
             if (user == null)

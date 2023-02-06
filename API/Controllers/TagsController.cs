@@ -20,14 +20,8 @@ namespace API.Controllers
             _tagService = tagService;
         }
 
-        [HttpGet, Authorize]
-        public ActionResult<IEnumerable<TagViewModel>> Get()
-        {
-            return new ObjectResult(_tagService.GetListTagsViewModel()._tags);
-        }
-
-        [HttpGet("GetTags")]
-        public ActionResult<IEnumerable<TagViewModel>> GetTags()
+        [HttpGet("GetAll"), Authorize]
+        public ActionResult<IEnumerable<TagViewModel>> GetAll()
         {
             return new ObjectResult(_tagService.GetListTagsViewModel()._tags);
         }
