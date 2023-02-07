@@ -85,7 +85,7 @@ namespace BlogWebApp.BLL.Services
             var all_blogArticles =_blogArticlesRepository.GetAll();
             foreach (var blogArticle in all_blogArticles)
             {
-                blogArticle.User = FindByIdAsync(blogArticle.UserId).Result;
+                blogArticle.User = UserFindByIdAsync(blogArticle.UserId).Result;
             }
 
             return all_blogArticles;
@@ -96,13 +96,13 @@ namespace BlogWebApp.BLL.Services
             var all_blogArticles = ((BlogArticlesRepository)_blogArticlesRepository).GetAllIncludeTags();
             foreach (var blogArticle in all_blogArticles)
             {
-                blogArticle.User = FindByIdAsync(blogArticle.UserId).Result;
+                blogArticle.User = UserFindByIdAsync(blogArticle.UserId).Result;
             }
 
             return all_blogArticles;
         }
 
-        private async Task<User> FindByIdAsync(string id)
+        private async Task<User> UserFindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
         }

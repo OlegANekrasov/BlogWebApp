@@ -12,9 +12,10 @@ using System.Xml.Linq;
 
 namespace API.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class RolesController : Controller
     {
-
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;

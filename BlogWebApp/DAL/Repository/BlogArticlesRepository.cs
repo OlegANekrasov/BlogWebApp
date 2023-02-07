@@ -68,25 +68,28 @@ namespace BlogWebApp.DAL.Repository
                     edit = true;
                 }
 
-                List<string> listNewTags = new List<string>();
-                string[] tags = model.Tags.Split(',');
-                foreach (var tag in tags)
+                if (model.Tags != null && model.Tags.Any())
                 {
-                    listNewTags.Add(tag.Trim());  
+                    List<string> listNewTags = new List<string>();
+                    string[] tags = model.Tags.Split(',');
+                    foreach (var tag in tags)
+                    {
+                        listNewTags.Add(tag.Trim());
+                    }
+
+                    List<string> listTags = blogArticle.Tags.Select(o => o.Name).ToList();
+
+                    var addTags = listNewTags.Except(listTags).ToList();
+                    var delTags = listTags.Except(listNewTags).ToList();
+
+                    if (addTags.Any() || delTags.Any())
+                    {
+                        edit = true;
+                    }
+
+                    await AddTags(addTags, blogArticle);
+                    await DelTags(delTags, blogArticle);
                 }
-
-                List<string> listTags = blogArticle.Tags.Select(o => o.Name).ToList();
-
-                var addTags = listNewTags.Except(listTags).ToList();
-                var delTags = listTags.Except(listNewTags).ToList();
-
-                if(addTags.Any() || delTags.Any())
-                {
-                    edit = true;
-                }
-
-                await AddTags(addTags, blogArticle);
-                await DelTags(delTags, blogArticle);
 
                 if (edit)
                 {
