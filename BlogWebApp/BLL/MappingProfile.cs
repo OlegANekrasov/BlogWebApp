@@ -35,6 +35,7 @@ namespace BlogWebApp.BLL
             CreateMap<EditTag, AddTag>();
             CreateMap<EditTag, DelTag>();
 
+            CreateMap<Comment, EditCommentViewModel>();
             CreateMap<CreateCommentViewModel, AddComment>();
             CreateMap<EditCommentViewModel, EditComment>();
             CreateMap<DeleteCommentViewModel, DelComment>();

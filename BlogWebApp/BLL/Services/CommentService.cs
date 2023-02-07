@@ -109,24 +109,8 @@ namespace BlogWebApp.BLL.Services
             return null;
         }
 
-        public async Task<BlogArticleCommentsViewModel> GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author, int? pageNumber, int pageSize)
+        public async Task<List<CommentsViewModel>> GetListCommentsViewModelAsync(string id)
         {
-            BlogArticleCommentsViewModel model = new BlogArticleCommentsViewModel()
-            {
-                blogArticle = new BlogArticleModel()
-                {
-                    Id = id,
-                    Title = blogArticle.Title,
-                    Description = blogArticle.Description,
-                    Images = blogArticle.Images,
-                    Tags = ((BlogArticleService)_blogArticleService).SetTagsInModel(blogArticle.Tags),
-                    UserName = author.UserName,
-                    UserId = author.Id,
-                    DateCreation = blogArticle.DateCreation.ToString("dd.MM.yyyy")
-                }
-               
-            };
-
             var listComments = new List<CommentsViewModel>();
 
             var listBlogArticleComments = GetAllByBlogArticleId(id);
@@ -146,6 +130,29 @@ namespace BlogWebApp.BLL.Services
                     });
                 }
             }
+
+            return listComments;
+        }
+
+        public async Task<BlogArticleCommentsViewModel> GetBlogArticleViewModel(string id, BlogArticle blogArticle, User author, int? pageNumber, int pageSize)
+        {
+            BlogArticleCommentsViewModel model = new BlogArticleCommentsViewModel()
+            {
+                blogArticle = new BlogArticleModel()
+                {
+                    Id = id,
+                    Title = blogArticle.Title,
+                    Description = blogArticle.Description,
+                    Images = blogArticle.Images,
+                    Tags = ((BlogArticleService)_blogArticleService).SetTagsInModel(blogArticle.Tags),
+                    UserName = author.UserName,
+                    UserId = author.Id,
+                    DateCreation = blogArticle.DateCreation.ToString("dd.MM.yyyy")
+                }
+               
+            };
+
+            var listComments = await GetListCommentsViewModelAsync(id); 
 
             var userQueryable = listComments.AsQueryable();
             if(pageNumber == null)
