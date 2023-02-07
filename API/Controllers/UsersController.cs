@@ -223,6 +223,17 @@ namespace API.Controllers
             return BadRequest("Ошибка при изменении пароля пользователя.");
         }
 
+        [HttpPatch("UpdateRoles"), Authorize]
+        public async Task<IActionResult> UpdateRoles(ChangeUserRoleViewModel model)
+        {
+            if (!await _userService.EditUserRolesAsync(model))
+            {
+                return BadRequest("Не удалось сохранить роли пользователя.");
+            }
+
+            return Ok("Роли пользователя успешно обновлены.");
+        }
+
         [HttpDelete("Delete"), Authorize]
         public async Task<IActionResult> Delete(UserDeleteViewModel model)
         {
