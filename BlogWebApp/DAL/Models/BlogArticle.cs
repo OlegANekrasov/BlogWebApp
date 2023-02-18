@@ -27,5 +27,6 @@ namespace BlogWebApp.DAL.Models
         public List<Tag> Tags { get; set; } = new List<Tag>();
         public List<Comment> Comments { get; set; } = new List<Comment>();
         public List<BlogArticleImage> Images { get; set; } = new List<BlogArticleImage>();
+        public List<BlogArticleVideo> Video { get; set; } = new List<BlogArticleVideo>();
     }
 }

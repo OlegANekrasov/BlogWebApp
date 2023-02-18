@@ -17,6 +17,7 @@ namespace BlogWebApp.DAL.Models
         public DateTime DateChange { get; set; }
 
         public byte[]? Image { get; set; }
+        public byte[]? VideoData { get; set; }
 
         public string UserId { get; set; }
         public User? User { get; set; }

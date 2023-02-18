@@ -99,7 +99,6 @@ namespace BlogWebApp.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("BlogArticleId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Image")
@@ -113,6 +112,27 @@ namespace BlogWebApp.Migrations
                     b.HasIndex("BlogArticleId");
 
                     b.ToTable("BlogArticleImages");
+                });
+
+            modelBuilder.Entity("BlogWebApp.DAL.Models.BlogArticleVideo", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BlogArticleId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("VideoData")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("VideoName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogArticleId");
+
+                    b.ToTable("BlogArticleVideo");
                 });
 
             modelBuilder.Entity("BlogWebApp.DAL.Models.Comment", b =>
@@ -140,6 +160,9 @@ namespace BlogWebApp.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("VideoData")
+                        .HasColumnType("BLOB");
 
                     b.HasKey("Id");
 
@@ -382,9 +405,16 @@ namespace BlogWebApp.Migrations
                 {
                     b.HasOne("BlogWebApp.DAL.Models.BlogArticle", "BlogArticle")
                         .WithMany("Images")
-                        .HasForeignKey("BlogArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogArticleId");
+
+                    b.Navigation("BlogArticle");
+                });
+
+            modelBuilder.Entity("BlogWebApp.DAL.Models.BlogArticleVideo", b =>
+                {
+                    b.HasOne("BlogWebApp.DAL.Models.BlogArticle", "BlogArticle")
+                        .WithMany("Video")
+                        .HasForeignKey("BlogArticleId");
 
                     b.Navigation("BlogArticle");
                 });
@@ -464,6 +494,8 @@ namespace BlogWebApp.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Images");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("BlogWebApp.DAL.Models.User", b =>
