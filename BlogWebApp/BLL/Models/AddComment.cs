@@ -10,6 +10,8 @@
 
         public byte[]? Image { get; set; }
 
+        public byte[]? Video { get; set; }
+
         public string UserId { get; set; }
 
         public string BlogArticleId { get; set; }

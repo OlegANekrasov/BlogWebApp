@@ -76,6 +76,42 @@ namespace BlogWebApp.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateComment(BlogArticleCommentsViewModel model)
+        {
+            ModelState.Remove("PaginatedListComments");
+            ModelState.Remove("blogArticle.Title");
+            ModelState.Remove("blogArticle.Description");
+            ModelState.Remove("blogArticle.Tags");
+            ModelState.Remove("blogArticle.UserId");
+            ModelState.Remove("blogArticle.UserName");
+            ModelState.Remove("blogArticle.DateCreation");
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Некорректные данные." });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = $"Не удалось загрузить пользователя с ID '{_userManager.GetUserId(User)}'." });
+            }
+
+            AddComment addComment = new AddComment()
+            {
+                Content = model.NewContent,
+                BlogArticleId = model.blogArticle.Id,
+                UserId= user.Id
+            };
+
+            if (!await _commentService.AddAsync(addComment))
+            {
+                return RedirectToAction("SomethingWentWrong", "Home", new { str = "Ошибка при добавлении комментария." });
+            }
+
+            return RedirectToAction("Index", new { id = model.blogArticle.Id });
+        }
+
         [HttpGet]
         public async Task<IActionResult> Create(string blogArticleId)
         {
@@ -114,7 +150,7 @@ namespace BlogWebApp.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Некорректные данные");
+                ModelState.AddModelError("", "Некорректные данные.");
                 return View(incomingmModel);
             }
 

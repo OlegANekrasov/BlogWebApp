@@ -13,6 +13,9 @@ namespace BlogWebApp.BLL.ViewModels.Comments
 
         public PaginatedList<CommentsViewModel> PaginatedListComments { get; set; }
 
-        public string? NewContent { get; set; }
+        [Required]
+        [DataType(DataType.Text)]
+        [Display(Name = "Комментарий", Prompt = "Введите комментарий")]
+        public string NewContent { get; set; } = "";
     }
 }
