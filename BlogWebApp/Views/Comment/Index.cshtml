@@ -79,12 +79,24 @@
 
 <h4> </h4>
 
+<div class="card" style="width: 36rem;">
+    <div class="card-body">
+        <textarea asp-for="NewContent" class="form-control" style="height:50px;"></textarea>
+        <span asp-validation-for="NewContent" class="text-danger"></span>        
+        <p class="card-text">    
+        </p>
+        <a title="Добавить фото"> <img style='height:24px;' src="@Url.Content("~/images/photo.png")" /></a>
+        <a title="Добавить видео"> <img style='height:24px;' src="@Url.Content("~/images/video.png")" /></a>
+        <a title="Добавить комментарий"  style="float: right"> <img style='height:24px;' src="@Url.Content("~/images/send-message.png")" /></a>
+    </div>
+</div>    
+@*
 <a asp-action="Create"
    asp-route-blogArticleId="@Model.blogArticle.Id"
    class="btn btn-secondary">
    Добавить комментарий
 </a>
-
+*@
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/comment.js"></script>
 <script src="~/lib/bootstrap/bootstrap-4.0.0/dist/js/vendor/jquery-slim.min.js"></script>

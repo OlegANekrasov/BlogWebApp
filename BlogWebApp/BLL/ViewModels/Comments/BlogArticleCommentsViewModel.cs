@@ -12,5 +12,7 @@ namespace BlogWebApp.BLL.ViewModels.Comments
         public BlogArticleModel blogArticle { get; set; }
 
         public PaginatedList<CommentsViewModel> PaginatedListComments { get; set; }
+
+        public string? NewContent { get; set; }
     }
 }
